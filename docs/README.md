@@ -78,5 +78,5 @@ Para rodar o projeto localmente com Hot-Reload da interface e isolamento lógico
 
 ### Build de Produção
 1. Gere o executável Python (usando Nuitka).
-2. Mova o `.exe` para `apps/frontend/src-tauri/binaries/`.
+2. Mova o `.exe` para `apps/frontend/src-ui/binaries/`.
 3. Em `apps/frontend`, execute `npm run tauri build` para gerar o instalador final contendo toda a arquitetura integrada.

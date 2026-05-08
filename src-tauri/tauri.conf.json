@@ -1,4 +1,8 @@
 {
+  "package": {
+    "productName": "airpg-frontend",
+    "version": "1.0.0"
+  },
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",

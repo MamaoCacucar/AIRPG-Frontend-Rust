@@ -13,7 +13,7 @@ AIRPG-Frontend-Rust/
 ```
 
 ## 1. PADRÃO DE PROJETO (RUST)
-- **Estrutura:** O código Rust deve residir em `src-tauri/src`. Use módulos separados para `vram`, `logger`, `fs_manager` e `commands`.
+- **Estrutura:** O código Rust deve residir em `src`. Use módulos separados para `vram`, `logger`, `fs_manager` e `commands`.
 - **Error Handling:** Nunca use `unwrap()`. Utilize o padrão `Result<T, Error>` e mapeie erros para strings que o Tauri possa retornar para o Frontend.
 - **Segurança de Memória:** Utilize `Arc<Mutex<T>>` ou `State` do Tauri para gerenciar o estado global (como o caminho da campanha ativa) entre diferentes threads.
 

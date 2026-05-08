@@ -19,7 +19,7 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
-apps/frontend/src-tauri/target/
+apps/frontend/src-ui/target/
 *.rs.bk
 
 ENV/
@@ -30,4 +30,4 @@ undo_buffer_*.json
 temp_state_*.json
 
 /temp
-/target
+/src-tauri/target
