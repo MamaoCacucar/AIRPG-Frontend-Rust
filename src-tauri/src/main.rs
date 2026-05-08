@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use tauri::api::process::Command;
+// use tauri::api::process::Command;
 
 // Comando para ler a pasta de campanhas (mockado para o teste de UI)
 #[tauri::command]

@@ -31,3 +31,5 @@ temp_state_*.json
 
 /temp
 /src-tauri/target
+AIRPG-FE.lnk
+/icons
