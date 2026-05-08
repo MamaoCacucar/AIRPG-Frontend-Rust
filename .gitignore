@@ -28,3 +28,6 @@ session.log
 *.log
 undo_buffer_*.json
 temp_state_*.json
+
+/temp
+/target

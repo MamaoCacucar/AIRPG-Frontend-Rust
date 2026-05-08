@@ -3,8 +3,8 @@
 ## ESTRUTURA DO REPOSITÓRIO
 ```plaintext
 AIRPG-Frontend-Rust/
-├── src/                  # (Interface) React, UI, HUD, WebGL Map
-├── src-rust/             # (Maestro) Rust, VRAM Optimizer, File I/O, IPC
+├── src-ui/                  # (Interface) React, UI, HUD, WebGL Map
+├── src/             # (Maestro) Rust, VRAM Optimizer, File I/O, IPC
 ├── package.json          # Dependências do Frontend
 └── docs/                         # Documentação do Projeto
     ├── ai_instructions.md        # Diretrizes para IAs (Abaixo)
