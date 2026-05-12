@@ -2,20 +2,20 @@ import { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 
 export default function CampaignSelector() {
-  const [campaigns, setCampaigns] = useState<string[]>([]);
+  const [campaigns, setCampaigns] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
 
   // Carrega as campanhas do Rust ao abrir a tela
   useEffect(() => {
-    invoke<string[]>('get_campaigns')
+    invoke('get_campaigns')
       .then(setCampaigns)
       .catch(console.error);
   }, []);
 
-  const handleSelectCampaign = async (campaignName: string) => {
+  const handleSelectCampaign = async (campaignName) => {
     try {
       // Avisa o Rust para ligar o executável Python isolado
-      const response = await invoke<string>('start_engine', { campaignName });
+      const response = await invoke('start_engine', { campaignName });
       console.log(response);
       
       // Muda a tela para o HUD / Terminal

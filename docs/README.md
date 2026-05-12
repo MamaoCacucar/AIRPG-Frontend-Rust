@@ -19,7 +19,7 @@ O projeto utiliza a **Clean Architecture** no backend para separar estritamente 
 
 ### A. Frontend (Interface, HUD e UX)
 - **Framework:** Tauri
-- **Tecnologias:** React + TypeScript
+- **Tecnologias:** React + JavaScript
 - **Responsabilidade:** Renderizar o terminal de texto, Player HUD, Quest Log, mapas procedurais interativos (Canvas/WebGL) e formulários dinâmicos de setup.
 
 ### B. Maestro Backend (Orquestração e Hardware)
