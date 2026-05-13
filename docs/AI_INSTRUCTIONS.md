@@ -3,8 +3,20 @@
 ## ESTRUTURA DO REPOSITÓRIO
 ```plaintext
 AIRPG-Frontend-Rust/
-├── src-ui/                  # (Interface) React, UI, HUD, WebGL Map
-├── src/             # (Maestro) Rust, VRAM Optimizer, File I/O, IPC
+├── src-ui/         
+│   ├───assets                # Imagens, fontes e outros recursos estáticos
+│   │   ├───icons             # Ícones usados na interface 
+│   │   └───templates         # Imagens Templates de UI
+│   ├───pages                 # Telas principais separados em subpastas
+│   │   └───menu              # Subpasta raiz da tela (substituir pelo nome da tela)
+│   │       ├───components    # Componentes individuais da tela (PascalCase)
+│   │       └───hooks         # hooks individuais da tela (PascalCase)
+│   ├───services              # API + serviços (kebab-case)
+│   ├───shared                # Componentes e hooks compartilhados entre diferentes telas
+│   │   ├───components        # Componentes reutilizáveis (PascalCase)
+│   │   └───hooks             # hooks reutilizáveis (PascalCase)
+│   └───utils                 # Helpers (kebab-case)
+├── src-tauri/            # (Maestro) Rust, VRAM Optimizer, File I/O, IPC
 ├── package.json          # Dependências do Frontend
 └── docs/                         # Documentação do Projeto
     ├── ai_instructions.md        # Diretrizes para IAs (Abaixo)
@@ -25,11 +37,9 @@ AIRPG-Frontend-Rust/
   3. Rust identifica o comando, executa a escrita no disco e retorna `Success`.
   4. React atualiza o HUD de logs.
 
-## 3. CONVENÇÕES DO FRONTEND (TSX)
-- **Arquitetura de Componentes:** - `components/ui/`: Componentes básicos (Buttons, Inputs).
-    - `components/game/`: Componentes de lógica (Terminal, HUD, Map).
-    - `hooks/`: Use hooks customizados para interagir com as APIs do Rust (ex: `useVramStatus`).
-- **CSS:** Use variáveis de CSS para o tema (cores de fundo, fontes mono) para facilitar a troca de skins da campanha.
+## 3. CONVENÇÕES DO FRONTEND (JSX)
+- **Hooks** para lógica reutilizável.
+- **CSS:** Use variáveis de CSS para o tema (cores de fundo, fontes) para facilitar a troca de skins da campanha. Sempre usar `.module.css`, classes nomeadas semanticamente (ex: container, title, buttonPrimary) e evitar inline styles.
 
 ## 4. GESTÃO DE SIDECAR (PYTHON)
 - O código Python (Sidecar) deve ser tratado como uma "Black Box" de processamento.
