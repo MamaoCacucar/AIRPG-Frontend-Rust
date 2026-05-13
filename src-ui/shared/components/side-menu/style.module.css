@@ -1,21 +1,6 @@
-:root {
-  /* Cores */
-  --menu-bg: #0E0E0E;
-  --menu-border: rgba(255, 255, 255, 0.10);
-  --text-primary: #ffffff;
-  --text-secondary: #C4C7C8;
-  --hover-bg: rgba(255, 255, 255, 0.05);
-  --active-bg: rgba(255, 255, 255, 0.10);
-
-  /* Fontes */
-  --font-title: 'Space Grotesk', sans-serif;
-  --font-subtitle: 'Space Mono', monospace;
-  --font-text: 'Inter', sans-serif;
-}
-
-.side-menu-container {
-  width: 100%;
-  height: 100%;
+.sideMenuContainer {
+  width: 15vw;
+  height: 100vh;
   padding: 1rem; /* 16px */
   background-color: var(--menu-bg);
   border-right: 0.0625rem solid var(--menu-border); /* 1px */
@@ -26,13 +11,13 @@
 }
 
 /* Header / Logo */
-.side-menu-header {
+.sideMenuHeader {
   padding-bottom: 2rem; /* 32px */
   display: flex;
   flex-direction: column;
 }
 
-.brand-title {
+.brandTitle {
   color: var(--text-primary);
   font-size: 1.5rem; /* 24px */
   font-family: var(--font-title);
@@ -41,7 +26,7 @@
   margin: 0;
 }
 
-.brand-subtitle {
+.brandSubtitle {
   color: var(--text-secondary);
   font-size: 0.75rem; /* 12px */
   font-family: var(--font-subtitle);
@@ -52,7 +37,7 @@
 }
 
 /* Navigation */
-.side-menu-nav {
+.sideMenuNav {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -60,7 +45,7 @@
   width: 100%;
 }
 
-.nav-item {
+.navItem {
   display: flex;
   align-items: center;
   gap: 0.75rem; /* 12px */
@@ -71,16 +56,16 @@
   border-right: 0.25rem solid transparent; /* 4px */
 }
 
-.nav-item:hover {
+.navItem:hover {
   background-color: var(--hover-bg);
 }
 
-.nav-item.active {
+.navItem.active {
   background-color: var(--active-bg);
   border-right-color: var(--text-primary);
 }
 
-.nav-icon {
+.navIcon {
   width: 1.375rem; /* 22px */
   height: 1.375rem;
   display: flex;
@@ -89,28 +74,28 @@
   color: var(--text-secondary);
 }
 
-.nav-item.active .nav-icon {
+.navItem.active .navIcon {
   color: var(--text-primary);
 }
 
-.nav-icon img {
+.navIcon img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-.nav-label {
+.navLabel {
   color: var(--text-secondary);
   font-size: 1rem; /* 16px */
 }
 
-.nav-item.active .nav-label {
+.navItem.active .navLabel {
   color: var(--text-primary);
   font-weight: 500;
 }
 
 /* Footer / User Profile */
-.side-menu-footer {
+.sideMenuFooter {
   padding-top: 2rem; /* 32px */
   border-top: 0.0625rem solid var(--menu-border);
   display: flex;
@@ -119,7 +104,7 @@
   width: 100%;
 }
 
-.profile-avatar {
+.profileAvatar {
   width: 2.5rem; /* 40px */
   height: 2.5rem;
   border-radius: 50%;
@@ -127,19 +112,19 @@
   object-fit: cover;
 }
 
-.profile-info {
+.profileContent {
   display: flex;
   flex-direction: column;
 }
 
-.profile-name {
+.profileName {
   color: var(--text-primary);
   font-size: 1rem;
   font-weight: 500;
   line-height: 1.5;
 }
 
-.profile-role {
+.profileRole {
   color: var(--text-secondary);
   font-size: 0.75rem;
 }

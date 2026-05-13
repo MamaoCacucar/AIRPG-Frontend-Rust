@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+ /* Cores */
+  --menu-bg: #0E0E0E;
+  --menu-border: rgba(255, 255, 255, 0.10);
+  --text-primary: #ffffff;
+  --text-secondary: #C4C7C8;
+  --hover-bg: rgba(255, 255, 255, 0.05);
+  --active-bg: rgba(255, 255, 255, 0.10);
+
+  /* Fontes */
+  --font-title: 'Space Grotesk', sans-serif;
+  --font-subtitle: 'Space Mono', monospace;
+  --font-text: 'Inter', sans-serif;
+}
