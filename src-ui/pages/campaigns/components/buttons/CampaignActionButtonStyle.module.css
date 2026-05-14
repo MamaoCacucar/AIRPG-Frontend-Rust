@@ -1,0 +1,63 @@
+.buttonContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  width: 100%;
+  background: #1C1B1B;
+  border-radius: 0.75rem; /* 12px */
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  text-align: left;
+}
+
+.buttonContainer:hover {
+  background: #252525;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.iconWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2.5rem; /* 40px */
+  height: 2.5rem;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.10);
+  border-radius: 0.5rem; /* 8px */
+}
+
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  object-fit: contain;
+}
+
+.textContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.125rem;
+  overflow: hidden;
+}
+
+.title {
+  color: white;
+  font-size: 0.875rem; /* 14px */
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.description {
+  color: #C4C7C8;
+  font-size: 0.625rem; /* 10px */
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+  opacity: 0.70;
+}

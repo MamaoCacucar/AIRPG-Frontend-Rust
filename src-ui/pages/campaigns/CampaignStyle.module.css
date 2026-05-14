@@ -1,0 +1,21 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100%;
+}
+
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 2rem;
+  gap: 1rem;
+}
+
+.sectionTitle {
+  color: var(--text-primary);
+  font-family: var(--font-title);
+  font-size: 1.5rem;
+  font-weight: 600;
+  word-wrap: 'break-word';
+}
