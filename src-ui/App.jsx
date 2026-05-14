@@ -1,8 +1,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { SideMenu } from "./shared/components/side-menu/sideMenu";
+import { SideMenu } from "./shared/components/side-menu/SideMenu";
 import { Header } from './shared/components/header/Header';
 import { CampaignGrid } from './pages/campaigns/components/cards/CampaignGrid';
 import { CampaignCard } from './pages/campaigns/components/cards/CampaignCard';
+import campaignImage from './assets/templates/campaign.png';
 
 export default function App() {
   const headerOptions = [
@@ -17,28 +18,28 @@ export default function App() {
       tag: "ÚLTIMA SESSÃO",
       title: "Neon Drift: Neo-Tokyo",
       description: "“Andando pelo beco onde apenas leds brilham...” • 4° Rodada",
-      imageUrl: "https://placehold.co/742x498"
+      imageUrl: campaignImage
     },
     {
       id: 2,
       tag: "CAMPANHA MAIS LONGA",
       title: "Catacumbas de Eldoria",
       description: "“Você finalmente alcança o fim das catacumbas...” • 50° Rodada",
-      imageUrl: "https://placehold.co/438x498"
+      imageUrl: campaignImage
     },
     {
       id: 3,
       tag: "LOBISOMEM SEGUE DESAPARECIDO",
       title: "Bosque de Prata",
       description: "“O vilarejo teme o pior...” • 10° Rodada",
-      imageUrl: "https://placehold.co/286x240"
+      imageUrl: campaignImage
     },
     {
       id: 4,
       tag: "LOBISOMEM SEGUE DESAPARECIDO",
       title: "Bosque de Prata",
       description: "“O vilarejo teme o pior...” • 10° Rodada",
-      imageUrl: "https://placehold.co/286x240"
+      imageUrl: campaignImage
     }
   ];
 

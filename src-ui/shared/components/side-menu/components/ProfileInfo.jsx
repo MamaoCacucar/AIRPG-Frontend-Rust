@@ -1,4 +1,4 @@
-import styles from '../style.module.css';
+import styles from '../SideMenuStyle.module.css';
 
 export const ProfileInfo = ({ user }) => (
   <footer className={styles.sideMenuFooter}>

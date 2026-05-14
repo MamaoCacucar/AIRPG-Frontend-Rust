@@ -2,7 +2,7 @@
 .gridContainer {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 0.5rem;
   width: 100%;
   min-height: 30rem;
   grid-auto-rows: 14rem;
@@ -60,6 +60,21 @@
   }
 }
 
+/* Classes Manuais para customização livre de tamanho */
+@media (min-width: 1024px) {
+  .colSpan2 { grid-column: span 2 / span 2; }
+  .colSpan3 { grid-column: span 3 / span 3; }
+  .colSpan4 { grid-column: span 4 / span 4; }
+  .colSpan5 { grid-column: span 5 / span 5; }
+  .colSpan6 { grid-column: span 6 / span 6; }
+  .colSpan7 { grid-column: span 7 / span 7; }
+  .colSpan8 { grid-column: span 8 / span 8; }
+  .colSpan9 { grid-column: span 9 / span 9; }
+  .colSpan10 { grid-column: span 10 / span 10; }
+  .rowSpan1 { grid-row: span 1 / span 1; }
+  .rowSpan2 { grid-row: span 2 / span 2; }
+}
+
 /* CampaignCard */
 .card {
   position: relative;
@@ -70,6 +85,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  container-type: inline-size;
 }
 
 .cardImage {
@@ -106,18 +122,13 @@
 }
 
 @media (min-width: 1024px) {
-  .gradientOverlay { padding: 2rem; }
+  .gradientOverlay { padding: 2rem 2rem 1rem 2rem; }
 }
 
 .contentWrapper {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.25rem;
-}
-
-@media (min-width: 768px) {
-  .contentWrapper { gap: 0.5rem; }
 }
 
 .tag {
@@ -184,15 +195,30 @@
 }
 
 .actionsContainer {
+  display: none; /* Inicialmente oculto e não ocupa espaço */
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
   width: 100%;
+  /* Transição suave sem ocupar espaço inicial */
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;
+}
+
+.card:hover .actionsContainer {
+  display: flex;
+  max-height: 4rem; /* Espaço suficiente para revelar os botões */
+  opacity: 1;
+  margin-top: 0.5rem;
 }
 
 @media (min-width: 768px) {
-  .actionsContainer { margin-top: 1.5rem; }
+  .actionsContainer { margin-top: 0.5rem; }
+  .card:hover .actionsContainer { margin-top: 0.5rem; }
 }
 
 .primaryButton {
@@ -236,8 +262,14 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-.iconPlaceholder {
+.icon {
   width: 1.125rem;
   height: 1.25rem;
-  background-color: white;
+}
+
+/* Container query ocultará o texto em cards estreitos */
+@container (max-width: 399px) {
+  .continueText {
+    display: none;
+  }
 }

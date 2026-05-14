@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import styles from './style.module.css';
+import styles from './SideMenuStyle.module.css';
 import { BrandTitle } from './components/BrandTitle';
 import { NavItem } from './components/NavItem';
 import { ProfileInfo } from './components/ProfileInfo';

@@ -1,5 +1,8 @@
 import React from 'react';
-import styles from './style.module.css';
+import styles from './CampaignCardStyle.module.css';
+import featherIcon from '../../../../assets/icons/feather.svg';
+import shareIcon from '../../../../assets/icons/share.svg';
+import playIcon from '../../../../assets/icons/play.svg';
 
 export function CampaignCard({
   tag,
@@ -9,8 +12,8 @@ export function CampaignCard({
   isMain = false,
   className = '',
   onContinue,
-  onAction1,
-  onAction2
+  onEdit,
+  onShare
 }) {
   return (
     <div 
@@ -42,31 +45,28 @@ export function CampaignCard({
             {description}
           </p>
 
-          {/* Ações: Renderizadas apenas se for o card principal */}
-          {isMain && (
-            <div className={styles.actionsContainer}>
-              <button
-                onClick={onContinue}
-                className={styles.primaryButton}
-              >
-                {/* Ícone de Play (Substitua pelo seu SVG oficial se preferir) */}
-                <svg width="11" height="14" viewBox="0 0 11 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11 7L0.5 13.0622L0.5 0.937822L11 7Z" />
-                </svg>
-                CONTINUAR
-              </button>
+          {/* Container de Ações (Exibido apenas no hover do card) */}
+          <div className={styles.actionsContainer}>
+            <button
+              onClick={onContinue}
+              className={styles.primaryButton}
+            >
+              {/* Ícone de Play (Substitua pelo seu SVG oficial se preferir) */}
+              {/* <svg width="11" height="14" viewBox="0 0 11 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11 7L0.5 13.0622L0.5 0.937822L11 7Z" />
+              </svg> */}
+              <img src={playIcon} alt="Continuar" className={styles.icon}/>
+              <span className={styles.continueText}>CONTINUAR</span>
+            </button>
 
-              <button onClick={onAction1} className={styles.secondaryButton}>
-                {/* Substitua por seu SVG */}
-                <div className={`${styles.iconPlaceholder} mask-icon`}></div> 
-              </button>
+            <button onClick={onEdit} className={styles.secondaryButton}>
+              <img src={featherIcon} alt="Editar" className={styles.icon}/>
+            </button>
 
-              <button onClick={onAction2} className={styles.secondaryButton}>
-                {/* Substitua por seu SVG */}
-                <div className={`${styles.iconPlaceholder} mask-icon`}></div>
-              </button>
-            </div>
-          )}
+            <button onClick={onShare} className={styles.secondaryButton}>
+              <img src={shareIcon} alt="Compartilhar" className={styles.icon}/>
+            </button>
+          </div>
         </div>
       </div>
     </div>

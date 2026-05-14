@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SearchBar } from './components/SearchBar';
-import styles from './style.module.css';
+import styles from './HeaderStyle.module.css';
 
 // Importe o SVG do usuário baseado nos seus assets disponíveis
 import userIcon from '../../../assets/templates/user.svg';

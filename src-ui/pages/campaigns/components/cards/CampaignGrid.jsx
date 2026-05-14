@@ -1,7 +1,7 @@
 import React from 'react';
-import styles from './style.module.css';
+import styles from './CampaignCardStyle.module.css';
 
-export function CampaignGrid({ children }) {
+export function CampaignGrid({ children, customLayout }) {
   // Conta o número de cards reais passados
   const childrenArray = React.Children.toArray(children).filter(React.isValidElement);
   const count = childrenArray.length;
@@ -13,7 +13,10 @@ export function CampaignGrid({ children }) {
         // Define o span de colunas e linhas dinamicamente
         let gridClasses = styles.gridItemDefault;
 
-        if (count === 2) {
+        if (customLayout && customLayout[index]) {
+          // Usa o layout manual se fornecido para o índice atual
+          gridClasses = customLayout[index];
+        } else if (count === 2) {
           // 2 Cards: 60% / 40%
           gridClasses = index === 0 ? styles.gridItem2_0 : styles.gridItem2_1;
         } else if (count === 3) {

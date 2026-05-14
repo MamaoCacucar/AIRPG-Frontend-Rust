@@ -1,4 +1,4 @@
-import styles from '../style.module.css';
+import styles from '../SideMenuStyle.module.css';
 
 export const NavItem = ({ iconSrc, label, isActive, onClick }) => (
   <div onClick={onClick} className={`${styles.navItem} ${isActive ? styles.active : ''}`}>
