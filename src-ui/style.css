@@ -1,11 +1,12 @@
 :root {
  /* Cores */
-  --menu-bg: #0E0E0E;
+  --menu-bg: rgba(14, 14, 14, 1);
   --menu-border: rgba(255, 255, 255, 0.10);
-  --text-primary: #ffffff;
-  --text-secondary: #C4C7C8;
+  --text-primary: rgba(255, 255, 255, 1);
+  --text-secondary: rgba(196, 199, 200, 1);
   --hover-bg: rgba(255, 255, 255, 0.05);
   --active-bg: rgba(255, 255, 255, 0.10);
+  --buttom-bg: rgba(14, 14, 14, 0.85);
 
   /* Fontes */
   --font-title: 'Space Grotesk', sans-serif;
@@ -46,4 +47,21 @@ html, body {
 button, input, textarea, select {
   font-family: inherit;
   color: inherit;
+}
+
+/* Ativa a estilização customizada da barra de rolagem e define sua espessura */
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--menu-bg, rgba(14, 14, 14, 1)); /* Cor do fundo (trilho) */
+  border-radius: 0.5rem;
+}
+
+/* Define a aparência da parte móvel da barra (thumb) */
+::-webkit-scrollbar-thumb {
+  background: var(--active-bg);
+  border-radius: 0.5rem;
 }

@@ -1,0 +1,59 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.primaryButton {
+  background-color: white;
+  color: #2F3131;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-family: var(--font-text);
+  font-weight: bold;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .primaryButton { font-size: 1rem; }
+}
+
+.primaryButton:hover {
+  background-color: #e5e7eb;
+}
+
+.secondaryButton {
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.secondaryButton:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.icon {
+  width: 1.125rem;
+  height: 1.25rem;
+}
+
+/* Container query ocultará o texto em cards estreitos */
+@container (max-width: 399px) {
+  .continueText {
+    display: none;
+  }
+}

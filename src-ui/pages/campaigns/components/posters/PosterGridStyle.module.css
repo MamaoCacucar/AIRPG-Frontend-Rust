@@ -1,0 +1,72 @@
+.gridContainer {
+  width: 100%;
+  padding-bottom: 1rem; /* 16px */
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0.75rem; /* 12px */
+  
+  /* Comportamento de Carrossel */
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory; /* Faz o scroll "travar" em cada card perfeitamente */
+  
+  /* Esconde a barra de rolagem mantendo a funcionalidade */
+  -ms-overflow-style: none; /* IE e Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.gridContainer::-webkit-scrollbar {
+  display: none; /* Chrome, Safari e Opera */
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Certifique-se de que a sua classe .gridContainer contém display flex e overflow-x */
+.gridContainer {
+  display: flex;
+  overflow-x: auto;
+  gap: 1.5rem; /* Ajuste o gap conforme preferir */
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  /* Esconde a scrollbar nativa pois usaremos os botões */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE e Edge */
+}
+
+.gridContainer::-webkit-scrollbar {
+  display: none; /* Chrome, Safari e Opera */
+}
+
+.scrollButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: var(--buttom-bg, rgba(14, 14, 14, 0.85));
+  border: 1px solid var(--menu-border, rgba(255, 255, 255, 0.1));
+  color: var(--text-primary, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.scrollButton:hover {
+  background-color: var(--menu-bg, rgba(14, 14, 14, 1));
+}
+
+.scrollButton.left {
+  left: -1.25rem;
+}
+
+.scrollButton.right {
+  right: -1.25rem;
+}

@@ -1,8 +1,6 @@
 import React from 'react';
 import styles from './CampaignCardStyle.module.css';
-import featherIcon from '/src-ui/assets/icons/feather.svg';
-import shareIcon from '/src-ui/assets/icons/share.svg';
-import playIcon from '/src-ui/assets/icons/play.svg';
+import { CampaignCardActions } from '../buttons/action/CampaignCardActions';
 
 export function CampaignCard({
   tag,
@@ -46,27 +44,13 @@ export function CampaignCard({
           </p>
 
           {/* Container de Ações (Exibido apenas no hover do card) */}
-          <div className={styles.actionsContainer}>
-            <button
-              onClick={onContinue}
-              className={styles.primaryButton}
-            >
-              {/* Ícone de Play (Substitua pelo seu SVG oficial se preferir) */}
-              {/* <svg width="11" height="14" viewBox="0 0 11 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M11 7L0.5 13.0622L0.5 0.937822L11 7Z" />
-              </svg> */}
-              <img src={playIcon} alt="Continuar" className={styles.icon}/>
-              <span className={styles.continueText}>CONTINUAR</span>
-            </button>
-
-            <button onClick={onEdit} className={styles.secondaryButton}>
-              <img src={featherIcon} alt="Editar" className={styles.icon}/>
-            </button>
-
-            <button onClick={onShare} className={styles.secondaryButton}>
-              <img src={shareIcon} alt="Compartilhar" className={styles.icon}/>
-            </button>
-          </div>
+          <CampaignCardActions 
+            className={styles.actionsContainer}
+            title="Continuar"
+            onContinue={onContinue} 
+            onEdit={onEdit} 
+            onShare={onShare} 
+          />
         </div>
       </div>
     </div>
