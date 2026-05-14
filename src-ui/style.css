@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
  /* Cores */
   --menu-bg: #0E0E0E;
@@ -15,4 +11,39 @@
   --font-title: 'Space Grotesk', sans-serif;
   --font-subtitle: 'Space Mono', monospace;
   --font-text: 'Inter', sans-serif;
+}
+
+/* =========================================
+   RESET GLOBAL E ESTILOS BASE DO BODY
+   ========================================= */
+
+*, *::before, *::after {
+  box-sizing: border-box; /* Faz o padding e border não aumentarem o tamanho final do elemento */
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  
+  /* Evita scroll horizontal indesejado caso algo passe da tela */
+  overflow-x: hidden; 
+
+  /* Aplica o tema base definido no :root */
+  background-color: var(--menu-bg);
+  color: var(--text-primary);
+  font-family: var(--font-text);
+  
+  /* Suaviza o render das fontes */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Remove os estilos padrão de botões e inputs */
+button, input, textarea, select {
+  font-family: inherit;
+  color: inherit;
 }

@@ -38,8 +38,13 @@ AIRPG-Frontend-Rust/
   4. React atualiza o HUD de logs.
 
 ## 3. CONVENÇÕES DO FRONTEND (JSX)
-- **Hooks** para lógica reutilizável.
-- **CSS:** Use variáveis de CSS para o tema (cores de fundo, fontes) para facilitar a troca de skins da campanha. Sempre usar `.module.css`, classes nomeadas semanticamente (ex: container, title, buttonPrimary) e evitar inline styles.
+- **Reutilização e Componentização:** Evite ao máximo a duplicação de código. Crie componentes isolados e utilize **Hooks** customizados para extrair qualquer lógica reutilizável.
+- **CSS Modules e Temas:** O projeto adota estritamente a abordagem de CSS Modules (`.module.css`). Utilize sempre **variáveis de CSS** para o tema (cores, backgrounds, fontes — ex: `var(--text-primary)`, `var(--font-title)`) para facilitar a troca dinâmica de skins da campanha.
+- **Unidades Responsivas:** É obrigatório o uso de unidades de medida responsivas e relativas (como `rem`, `em`, `vh`, `vw`, `%`). A estilização deve se adaptar dinamicamente, portanto, **evite o uso de `px`** (como visto no padrão do projeto, onde margens, paddings e fontes usam `rem`).
+- **Proibições Estritas (NÃO UTILIZAR):**
+  - **Tailwind CSS:** O uso de classes utilitárias do Tailwind é estritamente proibido (o framework está em processo de remoção do projeto).
+  - **Inline Styles:** Nunca utilize estilos inline (ex: `style={{ color: 'red' }}`). Toda a estilização deve ser feita através das classes do CSS Module.
+- **Nomenclatura Semântica:** Nomeie as classes no CSS de forma semântica, baseada no que o elemento é, e não em como ele se parece (ex: `container`, `contentWrapper`, `primaryButton`, `titleMain`).
 
 ## 4. GESTÃO DE SIDECAR (PYTHON)
 - O código Python (Sidecar) deve ser tratado como uma "Black Box" de processamento.
