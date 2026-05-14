@@ -1,0 +1,49 @@
+.cardContainer {
+    width: 100%;
+    position: relative;
+    background: rgba(255, 255, 255, 0);
+    box-shadow: 0 1.5625rem 3.125rem -0.75rem rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    border-radius: 0.75rem; /* 12px */
+    outline: 0.0625rem solid rgba(255, 255, 255, 0.10);
+    outline-offset: -0.0625rem;
+    
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.sceneImage {
+    align-self: stretch;
+    width: 100%;
+    /* Utiliza aspect-ratio ao invés de altura fixa para perfeita responsividade */
+    aspect-ratio: 16 / 9; 
+    object-fit: cover;
+    position: relative;
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.20) 100%);
+    background-blend-mode: saturation, normal;
+}
+
+.actionsWrapper {
+    /* Alterado de left fixo para right responsivo */
+    position: absolute;
+    top: 1.0625rem; /* ~17px */
+    right: 1.0625rem; 
+    
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 0.5rem; /* 8px */
+}
+
+.iconImage {
+    width: 1.125rem; /* 18px */
+    height: 1.25rem; /* 20px */
+}
+
+.placeholderIcon {
+    width: 0.833rem; /* 13.33px */
+    height: 0.833rem; /* 13.33px */
+    background: var(--text-primary, white); /* Usando variável de tema como fallback seguro */
+}

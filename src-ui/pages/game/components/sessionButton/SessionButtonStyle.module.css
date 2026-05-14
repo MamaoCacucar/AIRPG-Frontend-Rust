@@ -1,0 +1,42 @@
+.buttonContainer {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem; /* 16px */
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem 1rem; /* 8px top/bottom, 16px left/right */
+    background: #2A2A2A;
+    border-radius: 0.5rem; /* 8px */
+    outline: 0.0625rem solid rgba(255, 255, 255, 0.10); /* 1px */
+    outline-offset: -0.0625rem; /* -1px */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, outline-color 0.2s ease;
+}
+
+.buttonContainer:hover {
+    background-color: #333333;
+    outline-color: rgba(255, 255, 255, 0.25);
+}
+
+.icon {
+    width: 1rem; /* 16px */
+    height: 1rem; /* 16px */
+    background: #FFFFFF;
+    /* Dica: Quando tiver o ícone real (ex: .svg), substitua a div nativa por um <img> importado de src-ui/assets/icons/ */
+}
+
+.label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    color: #E5E2E1;
+    font-size: 0.75rem; /* 12px */
+    font-family: 'Space Mono', monospace;
+    font-weight: 400;
+    line-height: 0.75rem; /* 12px */
+    letter-spacing: 0.075rem; /* 1.2px */
+    word-wrap: break-word;
+}

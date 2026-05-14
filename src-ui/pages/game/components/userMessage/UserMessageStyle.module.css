@@ -1,0 +1,49 @@
+.container {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.bubble {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    max-width: 40.6rem; /* Aprox. 649.6px, evita que o balão ocupe a tela toda em monitores ultrawide */
+    padding: 1.5rem 2.25rem 1.5rem 1.5rem; /* 24px 36px 24px 24px */
+    background-color: #2A2A2A;
+    border-radius: 0.75rem; /* 12px */
+    border: 0.0625rem solid rgba(255, 255, 255, 0.10); /* 1px */
+}
+
+.messageText {
+    color: #E5E2E1;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem; /* 16px */
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.5rem; /* 24px */
+    word-wrap: break-word;
+    white-space: pre-wrap; /* Permite que quebras de linha na string funcionem nativamente */
+}
+
+.labelContainer {
+    position: absolute;
+    top: -0.6875rem; /* -11px */
+    right: 1.5rem; /* Alinhamento fixo à direita, substituindo o valor de left estático */
+    background-color: #131313; /* Mesma cor do fundo da página para cobrir a borda do balão */
+    padding: 0 0.5rem; /* 0 8px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.labelText {
+    color: #C4C7C8;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.625rem; /* 10px */
+    font-weight: 400;
+    line-height: 0.9375rem; /* 15px */
+    text-transform: uppercase;
+}

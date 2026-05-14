@@ -1,0 +1,196 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    padding: 3rem; /* 48px */
+    background: linear-gradient(0deg, #131313 0%, #131313 50%, rgba(19, 19, 19, 0) 100%);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.contentWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1rem; /* 16px */
+    width: 100%;
+    max-width: 64rem; /* 1024px */
+}
+
+.inputCard {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 0.25rem; /* 4px */
+    width: 100%;
+    padding: 0.5rem; /* 8px */
+    background: rgba(53, 53, 52, 0.60);
+    border-radius: 1rem; /* 16px */
+    border: 0.0625rem solid rgba(255, 255, 255, 0.10); /* 1px */
+    backdrop-filter: blur(0.75rem); /* 12px */
+    box-shadow: 0px 1.5625rem 3.125rem -0.75rem rgba(0, 0, 0, 0.25); /* 0px 25px 50px -12px */
+    position: relative;
+}
+
+/* Área de Input e Envio */
+.inputArea {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    padding: 0.5rem 1rem; /* 8px 16px */
+}
+
+.textInput {
+    flex: 1 1 0;
+    background: transparent;
+    border: none;
+    color: #C4C7C8;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem; /* 16px */
+    font-weight: 400;
+    padding: 0.625rem 0.75rem; /* 10px 12px */
+    resize: none;
+    outline: none;
+    height: 2.5rem; /* Altura fixa base, pode ser ajustada para autosize via JS */
+}
+
+.textInput::placeholder {
+    color: rgba(196, 199, 200, 0.50);
+}
+
+.sendButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem; /* 8px */
+    background: white;
+    border-radius: 0.5rem; /* 8px */
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.sendButton:hover {
+    opacity: 0.8;
+}
+
+.sendIcon {
+    width: 1.1875rem; /* 19px */
+    height: 1rem; /* 16px */
+    background: #2F3131;
+    /* Substituir por img/svg do ícone de enviar */
+}
+
+/* Barra de Ferramentas (Toolbar) */
+.toolbarArea {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    padding: 0.5rem 0.5rem 0 0.5rem; /* 8px 8px 0 8px */
+    border-top: 0.0625rem solid rgba(255, 255, 255, 0.05); /* 1px */
+    gap: 0.5rem; /* 8px */
+}
+
+.toolButton {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.375rem; /* 6px */
+    padding: 0.375rem 0.75rem; /* 6px 12px */
+    background: transparent;
+    border: none;
+    border-radius: 0.5rem; /* 8px */
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.toolButton:hover, .toolButton.active {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.toolIcon {
+    width: 0.9375rem; /* 15px */
+    height: 0.9375rem; /* 15px */
+    background: #C4C7C8;
+    /* Substituir por img/svg dos respectivos ícones */
+}
+
+.toolLabel {
+    color: #C4C7C8;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.625rem; /* 10px */
+    font-weight: 400;
+    line-height: 0.9375rem; /* 15px */
+}
+
+.divider {
+    width: 0.0625rem; /* 1px */
+    height: 1rem; /* 16px */
+    background: rgba(255, 255, 255, 0.10);
+    margin: 0 0.25rem; /* Espaço ao redor do divisor */
+}
+
+/* Controles Extras Direita */
+.extraControls {
+    display: flex;
+    flex: 1 1 0;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.controlsGroup {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.75rem; /* 12px */
+    padding: 0.375rem 0.75rem; /* 6px 12px */
+}
+
+.extraIcon {
+    width: 0.75rem; /* 12px */
+    height: 0.75rem; /* 12px */
+    background: #C4C7C8;
+}
+
+/* Footer / Marcação */
+.footerArea {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    opacity: 0.60;
+}
+
+.brandContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+}
+
+.brandTitle {
+    color: white;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.125rem; /* 18px */
+    font-weight: 700;
+    line-height: 1.5rem; /* 24px */
+    text-align: center;
+}
+
+.brandSubtitle {
+    color: #656464;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.625rem; /* 10px */
+    font-weight: 400;
+    line-height: 0.9375rem; /* 15px */
+    letter-spacing: 0.03125rem; /* 0.5px */
+    text-align: center;
+}

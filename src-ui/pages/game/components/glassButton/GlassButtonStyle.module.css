@@ -1,0 +1,27 @@
+.glassButton {
+    width: 3.125rem; /* 50px */
+    height: 3.125rem; /* 50px */
+    padding: 0.75rem 1rem; /* 12px 16px */
+    background: rgba(255, 255, 255, 0.30);
+    border-radius: 0.75rem; /* 12px */
+    outline: 0.0625rem solid rgba(255, 255, 255, 0.20); /* 1px */
+    outline-offset: -0.0625rem;
+    backdrop-filter: blur(6px);
+    
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.glassButton:hover {
+    background: rgba(255, 255, 255, 0.40);
+}
+
+.glassButton:active {
+    transform: scale(0.95);
+}
