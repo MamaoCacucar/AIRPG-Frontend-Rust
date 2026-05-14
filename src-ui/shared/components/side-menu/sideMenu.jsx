@@ -5,11 +5,11 @@ import { BrandTitle } from './components/BrandTitle';
 import { NavItem } from './components/NavItem';
 import { ProfileInfo } from './components/ProfileInfo';
 
-import bookIcon from '../../../assets/icons/book.svg';
-import galleryIcon from '../../../assets/icons/gallery.svg';
-import manuscriptIcon from '../../../assets/icons/manuscript.svg';
-import settingsIcon from '../../../assets/icons/settings.svg';
-import defaultAvatar from '../../../assets/templates/user.svg';
+import bookIcon from '/src-ui/assets/icons/book.svg';
+import galleryIcon from '/src-ui/assets/icons/gallery.svg';
+import manuscriptIcon from '/src-ui/assets/icons/manuscript.svg';
+import settingsIcon from '/src-ui/assets/icons/settings.svg';
+import defaultAvatar from '/src-ui/assets/templates/user.svg';
 
 const NAV_ITEMS = [
   { id: 'campaigns', icon: bookIcon, label: 'Campanhas', path: '/campaigns' },

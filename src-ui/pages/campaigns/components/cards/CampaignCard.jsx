@@ -1,8 +1,8 @@
 import React from 'react';
 import styles from './CampaignCardStyle.module.css';
-import featherIcon from '../../../../assets/icons/feather.svg';
-import shareIcon from '../../../../assets/icons/share.svg';
-import playIcon from '../../../../assets/icons/play.svg';
+import featherIcon from '/src-ui/assets/icons/feather.svg';
+import shareIcon from '/src-ui/assets/icons/share.svg';
+import playIcon from '/src-ui/assets/icons/play.svg';
 
 export function CampaignCard({
   tag,

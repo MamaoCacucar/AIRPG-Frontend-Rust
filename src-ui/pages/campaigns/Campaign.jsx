@@ -1,9 +1,9 @@
 import React from 'react';
-import { Header } from '../../shared/components/header/Header';
-import { CampaignActionGrid } from './components/buttons/CampaignActionGrid';
+import { Header } from '/src-ui/shared/components/header/Header';
+import { CampaignManageGrid } from './components/buttons/manage/CampaignManageGrid';
 import { CampaignGrid } from './components/cards/CampaignGrid';
 import { CampaignCard } from './components/cards/CampaignCard';
-import campaignImage from '../../assets/templates/campaign.png';
+import campaignImage from '/src-ui/assets/templates/campaign.png';
 import styles from './CampaignStyle.module.css';
 
 export function Campaign() {
@@ -61,7 +61,7 @@ export function Campaign() {
             />
           ))}
         </CampaignGrid>
-        <CampaignActionGrid />
+        <CampaignManageGrid />
         <p className={styles.sectionTitle}>Iniciar nova campanha</p>
       </div>
     </div>

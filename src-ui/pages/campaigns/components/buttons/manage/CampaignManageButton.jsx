@@ -1,7 +1,7 @@
 import React from 'react';
-import styles from './CampaignActionButtonStyle.module.css';
+import styles from './CampaignManageButtonStyle.module.css';
 
-export function CampaignActionButton({ title, description, icon: Icon }) {
+export function CampaignManageButton({ title, description, icon: Icon }) {
   return (
     <button className={styles.buttonContainer}>
       <div className={styles.iconWrapper}>

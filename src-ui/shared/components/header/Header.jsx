@@ -4,8 +4,8 @@ import { SearchBar } from './components/SearchBar';
 import styles from './HeaderStyle.module.css';
 
 // Importe o SVG do usuário baseado nos seus assets disponíveis
-import userIcon from '../../../assets/templates/user.svg';
-import notificationIcon from '../../../assets/icons/notification.svg';
+import userIcon from '/src-ui/assets/templates/user.svg';
+import notificationIcon from '/src-ui/assets/icons/notification.svg';
 
 export function Header({ options = [], showSearch = true }) {
   // Estado para controlar a aba ativa (seleciona a primeira por padrão)

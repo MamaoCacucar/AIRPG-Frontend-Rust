@@ -1,12 +1,12 @@
 import React from 'react';
-import { CampaignActionButton } from './CampaignActionButton';
-import styles from './CampaignActionGridStyle.module.css';
+import { CampaignManageButton } from './CampaignManageButton';
+import styles from './CampaignManageGridStyle.module.css';
 
-import PlusIcon from '../../../../assets/icons/plus.svg';
-import PenIcon from '../../../../assets/icons/pen.svg';
-import CloudIcon from '../../../../assets/icons/cloud.svg';
+import PlusIcon from '/src-ui/assets/icons/plus.svg';
+import PenIcon from '/src-ui/assets/icons/pen.svg';
+import CloudIcon from '/src-ui/assets/icons/cloud.svg';
 
-export function CampaignActionGrid() {
+export function CampaignManageGrid() {
   const actions = [
     {
       id: 'create',
@@ -33,7 +33,7 @@ export function CampaignActionGrid() {
       <div className={styles.visualDivider}/>
       <div className={styles.gridContainer}>
         {actions.map((action) => (
-          <CampaignActionButton
+          <CampaignManageButton
             key={action.id}
             title={action.title}
             description={action.description}
