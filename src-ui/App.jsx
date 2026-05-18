@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { SideMenu } from "./shared/components/side-menu/SideMenu";
 import { Campaign } from './pages/campaigns/Campaign';
+import { Game } from './pages/game/Game';
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
           <Route path="/gallery" element={<div>Conteúdo da Galeria</div>} />
           <Route path="/master" element={<div>Conteúdo do Mestre</div>} />
           <Route path="/settings" element={<div>Configurações da Aplicação</div>} />
+          <Route path="/game/:id" element={<Game />} />
         </Routes>
       </main>
     </div>
