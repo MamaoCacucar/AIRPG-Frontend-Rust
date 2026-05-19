@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './CampaignCardActionsStyle.module.css';
-import featherIcon from '/src-ui/assets/icons/feather.svg';
+import penIcon from '/src-ui/assets/icons/pen.svg';
 import shareIcon from '/src-ui/assets/icons/share.svg';
 import playIcon from '/src-ui/assets/icons/play.svg';
 
@@ -13,7 +13,7 @@ export function CampaignCardActions({ title, onContinue, onEdit, onShare, classN
       </button>
 
       <button onClick={onEdit} className={styles.secondaryButton}>
-        <img src={featherIcon} alt="Editar" className={styles.icon} />
+        <img src={penIcon} alt="Editar" className={styles.icon} />
       </button>
 
       <button onClick={onShare} className={styles.secondaryButton}>

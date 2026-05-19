@@ -23,8 +23,6 @@
 .icon {
     width: 1rem; /* 16px */
     height: 1rem; /* 16px */
-    background: #FFFFFF;
-    /* Dica: Quando tiver o ícone real (ex: .svg), substitua a div nativa por um <img> importado de src-ui/assets/icons/ */
 }
 
 .label {

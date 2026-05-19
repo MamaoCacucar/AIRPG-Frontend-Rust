@@ -1,13 +1,14 @@
 import styles from './NarrativeBlockStyle.module.css';
+import rayIcon from '/src-ui/assets/icons/ray.svg'
 
-export const NarrativeBlock = ({ content, metadata }) => {
+export const NarrativeBlock = ({ text, metadata }) => {
     // Função para processar e separar narrativa de diálogos
     const renderContent = () => {
-        if (!content) return null;
+        if (!text) return null;
 
         // Regex para capturar tudo que está entre aspas duplas (retas ou curvas)
         const regex = /([\"“][^\"”]+[\"”])/g;
-        const segments = content.split(regex);
+        const segments = text.split(regex);
 
         return segments.map((segment, index) => {
             if (!segment.trim()) return null;
@@ -47,7 +48,7 @@ export const NarrativeBlock = ({ content, metadata }) => {
             {metadata && (
                 <div className={styles.metadataWrapper}>
                     <div className={styles.metadataIconWrapper}>
-                        <div className={styles.metadataIcon} />
+                        <img className={styles.metadataIcon} src={rayIcon} alt='relatório de geração' />
                     </div>
                     <span className={styles.metadataText}>{metadata}</span>
                 </div>

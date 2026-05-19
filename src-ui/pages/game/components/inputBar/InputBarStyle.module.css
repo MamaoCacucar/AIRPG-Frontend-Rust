@@ -4,7 +4,7 @@
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    padding: 3rem; /* 48px */
+    padding: 3rem 3rem 0.5rem 3rem; /* 48px 48px 0 48px*/
     background: linear-gradient(0deg, #131313 0%, #131313 50%, rgba(19, 19, 19, 0) 100%);
     position: absolute;
     bottom: 0;
@@ -83,8 +83,6 @@
 .sendIcon {
     width: 1.1875rem; /* 19px */
     height: 1rem; /* 16px */
-    background: #2F3131;
-    /* Substituir por img/svg do ícone de enviar */
 }
 
 /* Barra de Ferramentas (Toolbar) */
@@ -118,8 +116,6 @@
 .toolIcon {
     width: 0.9375rem; /* 15px */
     height: 0.9375rem; /* 15px */
-    background: #C4C7C8;
-    /* Substituir por img/svg dos respectivos ícones */
 }
 
 .toolLabel {
@@ -156,7 +152,6 @@
 .extraIcon {
     width: 0.75rem; /* 12px */
     height: 0.75rem; /* 12px */
-    background: #C4C7C8;
 }
 
 /* Footer / Marcação */

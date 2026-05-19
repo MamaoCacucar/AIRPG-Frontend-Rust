@@ -1,7 +1,7 @@
-import styles from './GameImageCardStyle.module.css';
-import { GlassButton } from './GlassButton';
-import featherIcon from '/src/assets/icons/feather.svg'
-import loopIcon from '/src/assets/icons/loop.svg'
+import styles from './ImageCardStyle.module.css';
+import { GlassButton }  from '../glassButton/GlassButton';
+import penIcon from '/src-ui/assets/icons/pen.svg'
+import loopIcon from '/src-ui/assets/icons/white_loop.svg'
 
 
 export const ImageCard = ({ imageUrl }) => {
@@ -16,7 +16,7 @@ export const ImageCard = ({ imageUrl }) => {
             <div className={styles.actionsWrapper}>
                 {/* Botão 1 - Ícone de Imagem */}
                 <GlassButton ariaLabel="Ação Primária">
-                    <img className={styles.iconImage} src={featherIcon} alt="Editar prompt de imagem e regerar" />
+                    <img className={styles.iconImage} src={penIcon} alt="Editar prompt de imagem e regerar" />
                 </GlassButton>
 
                 {/* Botão 2 - Placeholder Quadrado (Referência do seu código original) */}

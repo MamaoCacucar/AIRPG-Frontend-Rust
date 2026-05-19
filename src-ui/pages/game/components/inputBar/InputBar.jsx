@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import styles from './InputBarStyle.module.css';
-import messageIcon from '/src/assets/icons/message.svg'
-import swordsIcon from '/src/assets/icons/swords.svg'
-import questionIcon from '/src/assets/icons/question.svg'
-import diceIcon from '/src/assets/icons/dice.svg'
-import rollBackIcon from '/src/assets/icons/rollback.svg'
-import loopIcon from '/src/assets/icons/loop.svg'
-import sendIcon from '/src/assets/icons/send.svg'
+import messageIcon from '/src-ui/assets/icons/message.svg'
+import swordsIcon from '/src-ui/assets/icons/swords.svg'
+import questionIcon from '/src-ui/assets/icons/question.svg'
+import diceIcon from '/src-ui/assets/icons/dice.svg'
+import rollBackIcon from '/src-ui/assets/icons/rollback.svg'
+import likeIcon from '/src-ui/assets/icons/like.svg'
+import loopIcon from '/src-ui/assets/icons/loop.svg'
+import sendIcon from '/src-ui/assets/icons/send.svg'
 
 export function InputBar() {
     const [inputValue, setInputValue] = useState('');
@@ -41,7 +42,7 @@ export function InputBar() {
                             rows={1}
                         />
                         <button className={styles.sendButton} onClick={handleSend} aria-label="Enviar">
-                            <div className={styles.sendIcon} aria-hidden="true" />
+                            <img className={styles.sendIcon} src={sendIcon} alt='Enviar' />
                         </button>
                     </div>
 

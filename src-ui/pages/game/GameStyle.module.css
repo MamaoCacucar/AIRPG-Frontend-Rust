@@ -12,7 +12,7 @@
 /* Cabeçalho */
 .header {
     width: 100%;
-    padding: 2rem 3rem; /* 32px e 48px */
+    padding: 1rem 6rem;
     border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.05); /* 1px */
     display: flex;
     justify-content: space-between;
@@ -46,6 +46,7 @@
 
 .actionButtons {
     display: flex;
+    flex-direction: column;
     gap: 0.5rem; /* 8px */
 }
 

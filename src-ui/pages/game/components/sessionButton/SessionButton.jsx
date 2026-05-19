@@ -1,4 +1,4 @@
-import styles from './EndSessionButtonStyle.module.css';
+import styles from './SessionButtonStyle.module.css';
 
 export function SessionButton({ title, icon, onClick }) {
     return (
