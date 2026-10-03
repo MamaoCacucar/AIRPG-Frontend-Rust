@@ -11,19 +11,19 @@ import { invoke } from '@tauri-apps/api/core';
  */
 
 export function useCampaigns() {
+  const [activeCampaigns, setActiveCampaigns] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
-  const [posters, setPosters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchCampaigns() {
       try {
         // Chamadas ao backend Rust via Tauri IPC
-        const loadedCampaigns = await invoke('get_active_campaigns');
-        const loadedPosters = await invoke('get_poster_campaigns');
+        const activeCampaigns = await invoke('get_active_campaigns');
+        const campaigns = await invoke('get_campaigns');
         
-        setCampaigns(loadedCampaigns);
-        setPosters(loadedPosters);
+        setActiveCampaigns(activeCampaigns);
+        setCampaigns(campaigns);
       } catch (error) {
         console.error("Erro ao carregar campanhas:", error);
       } finally {
@@ -33,5 +33,5 @@ export function useCampaigns() {
     fetchCampaigns();
   }, []);
 
-  return { campaigns, posters, isLoading };
+  return { activeCampaigns, campaigns, isLoading };
 }

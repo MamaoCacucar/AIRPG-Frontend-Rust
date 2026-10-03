@@ -15,7 +15,6 @@ function cleanTags(tags) {
 }
 
 export function PosterCard({ title, tags, imageSrc, onContinue, onEdit, onShare }) {
-  console.log({ title, tags, imageSrc })
   return (
     <article className={styles.card}>
       <img className={styles.image} src={imageSrc} alt={`Poster da campanha ${title}`} />

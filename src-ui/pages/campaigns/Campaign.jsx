@@ -13,7 +13,7 @@ import { useCampaigns } from './hooks/useCampaigns';
 
 export function Campaign() {
   const navigate = useNavigate();
-  const { campaigns, posters, isLoading } = useCampaigns();
+  const { activeCampaigns, campaigns, isLoading } = useCampaigns();
 
   const headerOptions = [
     { label: 'Biblioteca', onClick: () => console.log('Biblioteca clicada') },
@@ -31,7 +31,7 @@ export function Campaign() {
       <div className={styles.contentContainer}>
         <p className={styles.sectionTitle}>Continuar campanha</p>
         <CampaignGrid>
-          {campaigns.map((camp) => (
+          {activeCampaigns.map((camp) => (
             <CampaignCard
               key={camp.id}
               tag={camp.tag}
@@ -48,13 +48,13 @@ export function Campaign() {
         
         <p className={styles.sectionTitle}>Iniciar nova campanha</p>
         <PosterGrid>
-          {posters.map((poster) => (
+          {campaigns.map((poster) => (
             <PosterCard
               key={poster.id}
               title={poster.title}
               tags={poster.tags}
               players={poster.players}
-              imageSrc={poster.imageSrc}
+              imageSrc={poster.banner_url}
             />
           ))}
         </PosterGrid>

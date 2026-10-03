@@ -18,7 +18,7 @@ O projeto utiliza a **Clean Architecture** no backend para separar estritamente 
 ## 4. COMPONENTES DA INFRAESTRUTURA E TECNOLOGIAS
 
 ### A. Frontend (Interface, HUD e UX)
-- **Framework:** Tauri
+- **Framework:** Tauri V2
 - **Tecnologias:** React + JavaScript
 - **Responsabilidade:** Renderizar o terminal de texto, Player HUD, Quest Log, mapas procedurais interativos (Canvas/WebGL) e formulários dinâmicos de setup.
 
