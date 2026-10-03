@@ -65,6 +65,28 @@ Para garantir a verossimilhança do mundo, o sistema utiliza um diretório gerid
 
 Para rodar o projeto localmente com Hot-Reload da interface e isolamento lógico, utilize dois terminais. Assegure-se de que o KoboldCPP e o ComfyUI estejam rodando em background.
 
+### Configuração da pasta de campanhas
+
+O Maestro lê os arquivos `.json` da pasta definida pela variável de ambiente `CAMPAIGNS_DIR`, carregada do arquivo `.env` na raiz do repositório. Esse arquivo é ignorado pelo Git; ajuste o caminho localmente conforme necessário:
+
+```env
+CAMPAIGNS_DIR=C:/Users/Felps/Documents/1.Falculdade/Repositorios_GitHub/AI/campaigns
+```
+
+Inicie o Tauri normalmente com `npm run tauri dev`. Variáveis definidas no ambiente do processo têm precedência sobre os valores do `.env`.
+
+Cada arquivo deve conter um objeto `campaign` com `title`, `tags` e `poster_url`. Para imagens de teste salvas junto das campanhas, informe o caminho do arquivo no `poster_url`; o backend entrega a imagem à interface apenas se ela estiver dentro da pasta configurada em `CAMPAIGNS_DIR`. Caminhos web como `/assets/templates/posterCampaign.png` continuam aceitos para imagens da pasta `public`. O ID retornado é o nome do arquivo sem a extensão `.json`. Exemplo:
+
+```json
+{
+  "campaign": {
+    "title": "Naufrago",
+    "tags": ["ÉPICO", "ALTA FANTASIA"],
+    "poster_url": "/assets/templates/posterCampaign.png"
+  }
+}
+```
+
 ### Terminal 1: AI Engine (Python)
 (Ideal para debugar a lógica de IA isoladamente antes de integrar à UI)
 1. `python -m venv venv`

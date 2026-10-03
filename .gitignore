@@ -23,7 +23,7 @@ apps/frontend/src-ui/target/
 *.rs.bk
 
 ENV/
-.env
+/.env
 session.log
 *.log
 undo_buffer_*.json

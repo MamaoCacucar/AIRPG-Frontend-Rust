@@ -4,6 +4,8 @@
 )]
 
 use serde::{Deserialize, Serialize};
+mod campaign_repository;
+use campaign_repository::{Campaign, CampaignImage, CampaignRepository};
 
 // Comando para ler a pasta de campanhas (mockado para o teste de UI)
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -44,30 +46,23 @@ fn get_active_campaigns() -> Vec<ActiveCampaign> {
     ]
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Campaign {
-    pub id: String,
-    pub title: String,
-    pub poster_url: String,
-    pub tags: Vec<String>,
+#[tauri::command]
+fn get_campaigns() -> Result<Vec<Campaign>, String> {
+    CampaignRepository::from_env()?.get_campaigns()
 }
 
 #[tauri::command]
-fn get_campaigns() -> Vec<Campaign> {
-    vec![
-        Campaign {
-            id: "1".into(),
-            title: "O Despertar dos Deuses".into(),
-            tags: vec!["ÉPICO".into(), "ALTA FANTASIA".into()],
-            poster_url: "/assets/templates/posterCampaign.png".into(),
-        },
-        Campaign {
-            id: "2".into(),
-            title: "Sombras de Londres".into(),
-            tags: vec!["MISTÉRIO".into(), "GÓTICO".into()],
-            poster_url: "/assets/templates/posterCampaign.png".into(),
-        },
-    ]
+fn get_secret_campaigns(admin_code: String) -> Result<Vec<Campaign>, String> {
+    if admin_code != "admin" {
+        return Err("Modo admin não autorizado".into());
+    }
+
+    CampaignRepository::from_env()?.get_secret_campaigns()
+}
+
+#[tauri::command]
+fn get_campaign_image(path: String) -> Result<CampaignImage, String> {
+    CampaignRepository::from_env()?.read_campaign_image(&path)
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -148,6 +143,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             get_active_campaigns,
             get_campaigns,
+            get_secret_campaigns,
+            get_campaign_image,
             load_game_session,
             start_engine])
         .plugin(tauri_plugin_shell::init())

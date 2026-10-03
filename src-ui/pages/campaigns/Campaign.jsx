@@ -11,9 +11,9 @@ import styles from './CampaignStyle.module.css';
 // Hook de dados
 import { useCampaigns } from './hooks/useCampaigns';
 
-export function Campaign() {
+export function Campaign({ adminEnabled = false }) {
   const navigate = useNavigate();
-  const { activeCampaigns, campaigns, isLoading } = useCampaigns();
+  const { activeCampaigns, campaigns, isLoading } = useCampaigns(adminEnabled);
 
   const headerOptions = [
     { label: 'Biblioteca', onClick: () => console.log('Biblioteca clicada') },
