@@ -14,7 +14,7 @@ function cleanTags(tags) {
   return cleanTags;
 }
 
-export function PosterCard({ title, tags, imageSrc, onContinue, onEdit, onShare }) {
+export function PosterCard({ title, tags, imageSrc, onPlay, onEdit, onShare }) {
   return (
     <article className={styles.card}>
       <img className={styles.image} src={imageSrc} alt={`Poster da campanha ${title}`} />
@@ -25,7 +25,7 @@ export function PosterCard({ title, tags, imageSrc, onContinue, onEdit, onShare 
         <CampaignCardActions 
           className={styles.actionsContainer}
           title="Iniciar"
-          onContinue={onContinue} 
+          onPlay={onPlay} 
           onEdit={onEdit} 
           onShare={onShare} 
         />

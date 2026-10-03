@@ -31,15 +31,15 @@ export function Campaign() {
       <div className={styles.contentContainer}>
         <p className={styles.sectionTitle}>Continuar campanha</p>
         <CampaignGrid>
-          {activeCampaigns.map((camp) => (
+          {activeCampaigns.map((activeCampaign) => (
             <CampaignCard
-              key={camp.id}
-              tag={camp.tag}
-              title={camp.title}
-              description={camp.description}
-              imageUrl={camp.imageUrl}
+              key={activeCampaign.id}
+              tag={activeCampaign.tag}
+              title={activeCampaign.title}
+              description={activeCampaign.description}
+              imageUrl={activeCampaign.imageUrl}
               // Aqui passamos o direcionamento exigido para o botão primário do CampaignCardActions
-              onContinue={() => navigate(`/game/${camp.id}`)}
+              onPlay={() => navigate(`/game/${activeCampaign.id}`)}
             />
           ))}
         </CampaignGrid>
@@ -48,13 +48,14 @@ export function Campaign() {
         
         <p className={styles.sectionTitle}>Iniciar nova campanha</p>
         <PosterGrid>
-          {campaigns.map((poster) => (
+          {campaigns.map((campaign) => (
             <PosterCard
-              key={poster.id}
-              title={poster.title}
-              tags={poster.tags}
-              players={poster.players}
-              imageSrc={poster.banner_url}
+              key={campaign.id}
+              title={campaign.title}
+              tags={campaign.tags}
+              players={campaign.players}
+              imageSrc={campaign.poster_url}
+              onPlay={() => navigate(`/game/${campaign.id}`)}
             />
           ))}
         </PosterGrid>

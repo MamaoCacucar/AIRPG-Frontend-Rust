@@ -18,23 +18,39 @@ import { invoke } from '@tauri-apps/api/core';
 export function useGameSession(campaignId) {
   const [session, setSession] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    let isActive = true;
+
     async function loadSession() {
-      if (!campaignId) return;
-      
+      setIsLoading(true);
+      setError(null);
+      setSession(null);
+
+      if (!campaignId) {
+        setError('ID da campanha não informado.');
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        // Rust intercepta a chamada, inicializa contexto e devolve o histórico
         const sessionData = await invoke('load_game_session', { id: campaignId });
-        setSession(sessionData);
+        if (isActive) setSession(sessionData);
       } catch (error) {
         console.error(`Erro ao carregar sessão ${campaignId}:`, error);
+        if (isActive) setError(String(error));
       } finally {
-        setIsLoading(false);
+        if (isActive) setIsLoading(false);
       }
     }
+
     loadSession();
+
+    return () => {
+      isActive = false;
+    };
   }, [campaignId]);
 
-  return { session, isLoading };
+  return { session, isLoading, error };
 }

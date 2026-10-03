@@ -4,10 +4,10 @@ import penIcon from '/src-ui/assets/icons/pen.svg';
 import shareIcon from '/src-ui/assets/icons/share.svg';
 import playIcon from '/src-ui/assets/icons/play.svg';
 
-export function CampaignCardActions({ title, onContinue, onEdit, onShare, className = '' }) {
+export function CampaignCardActions({ title, onPlay, onEdit, onShare, className = '' }) {
   return (
     <div className={`${styles.container} ${className}`.trim()}>
-      <button onClick={onContinue} className={styles.primaryButton}>
+      <button onClick={onPlay} className={styles.primaryButton}>
         <img src={playIcon} alt={title || 'botão principal'} className={styles.icon} />
         <span className={styles.continueText}>{title}</span>
       </button>

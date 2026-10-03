@@ -18,7 +18,7 @@ export default function App() {
           <Route path="/gallery" element={<div>Conteúdo da Galeria</div>} />
           <Route path="/master" element={<div>Conteúdo do Mestre</div>} />
           <Route path="/settings" element={<div>Configurações da Aplicação</div>} />
-          <Route path="/game" element={<Game campaignId={1} campaignTitle="As Crônicas de Obsidiana" roundNumber={32}/>} /> 
+          <Route path="/game/:id" element={<Game />} />
         </Routes>
       </main>
     </div>

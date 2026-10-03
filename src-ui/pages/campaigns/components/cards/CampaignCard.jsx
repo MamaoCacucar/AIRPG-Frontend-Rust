@@ -9,7 +9,7 @@ export function CampaignCard({
   imageUrl,
   isMain = false,
   className = '',
-  onContinue,
+  onPlay,
   onEdit,
   onShare
 }) {
@@ -47,7 +47,7 @@ export function CampaignCard({
           <CampaignCardActions 
             className={styles.actionsContainer}
             title="Continuar"
-            onContinue={onContinue} 
+            onPlay={onPlay} 
             onEdit={onEdit} 
             onShare={onShare} 
           />

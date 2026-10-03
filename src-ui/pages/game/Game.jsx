@@ -19,7 +19,7 @@ export function Game() {
     const navigate = useNavigate();
     
     // Busca dados reais do backend substituindo os mocks
-    const { session, isLoading } = useGameSession(id);
+    const { session, isLoading, error } = useGameSession(id);
     
     const messagesEndRef = useRef(null);
 
@@ -50,8 +50,16 @@ export function Game() {
         }
     };
 
-    if (isLoading || !session) {
-        return <div className={styles.pageContainer}><p>Sincronizando Sidecar Python...</p></div>;
+    if (isLoading) {
+        return <div className={styles.pageContainer}><p>Carregando sessão...</p></div>;
+    }
+
+    if (error) {
+        return <div className={styles.pageContainer}><p role="alert">Não foi possível carregar a sessão: {error}</p></div>;
+    }
+
+    if (!session) {
+        return <div className={styles.pageContainer}><p role="alert">Sessão indisponível.</p></div>;
     }
 
     return (
