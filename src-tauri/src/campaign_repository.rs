@@ -8,6 +8,7 @@ pub struct Campaign {
     pub title: String,
     pub poster_url: String,
     pub tags: Vec<String>,
+    pub path: String,
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub missing_fields: Vec<String>,
 }
@@ -146,10 +147,38 @@ impl CampaignRepository {
                     title: file.campaign.title,
                     poster_url: file.campaign.poster_url.unwrap_or_default(),
                     tags: file.campaign.tags.unwrap_or_default(),
+                    path: path.display().to_string(),
                     missing_fields,
                 })
             })
             .collect()
+    }
+
+    pub fn validate_campaign_path(&self, campaign_path: &str) -> Result<PathBuf, String> {
+        let campaigns_dir = fs::canonicalize(&self.campaigns_dir).map_err(|error| {
+            format!(
+                "Não foi possível acessar a pasta de campanhas '{}': {error}",
+                self.campaigns_dir.display()
+            )
+        })?;
+        let campaign_path = fs::canonicalize(campaign_path)
+            .map_err(|error| format!("Não foi possível acessar o arquivo da campanha: {error}"))?;
+
+        let is_json = campaign_path
+            .extension()
+            .and_then(|extension| extension.to_str())
+            .is_some_and(|extension| extension.eq_ignore_ascii_case("json"));
+        if !campaign_path.starts_with(&campaigns_dir) || !is_json {
+            return Err(
+                "O arquivo da campanha precisa ser um JSON dentro da pasta de campanhas".into(),
+            );
+        }
+
+        if !campaign_path.is_file() {
+            return Err("O caminho informado não é um arquivo de campanha".into());
+        }
+
+        Ok(campaign_path)
     }
 
     pub fn read_campaign_image(&self, image_path: &str) -> Result<CampaignImage, String> {

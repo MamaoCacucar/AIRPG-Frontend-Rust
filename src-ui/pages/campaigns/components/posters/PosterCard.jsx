@@ -30,7 +30,7 @@ function cleanTags(tags) {
   return cleanTags;
 }
 
-export function PosterCard({ title, tags, imageSrc, onPlay, onEdit, onShare }) {
+export function PosterCard({ title, tags, imageSrc, onPlay, onEdit, onShare, isStarting = false }) {
   const [localImageUrl, setLocalImageUrl] = useState(null);
   const localImage = isLocalPath(imageSrc);
 
@@ -77,10 +77,11 @@ export function PosterCard({ title, tags, imageSrc, onPlay, onEdit, onShare }) {
         <span className={styles.tags}>{cleanTags(tags)}</span>
         <CampaignCardActions 
           className={styles.actionsContainer}
-          title="Iniciar"
+          title={isStarting ? 'Iniciando...' : 'Iniciar'}
           onPlay={onPlay} 
           onEdit={onEdit} 
           onShare={onShare} 
+          disabled={isStarting}
         />
       </div>
     </article>

@@ -88,17 +88,25 @@ Cada arquivo deve conter um objeto `campaign` com `title`, `tags` e `poster_url`
 ```
 
 ### Terminal 1: AI Engine (Python)
-(Ideal para debugar a lógica de IA isoladamente antes de integrar à UI)
+(Opcional, para debugar a lógica de IA isoladamente)
 1. `python -m venv venv`
 2. `.\venv\Scripts\activate`
 3. `pip install -r requirements.txt`
-4. `python src/main_dev.py` (simula as entradas e saídas no console)
+4. `python src/main.py` (simula as entradas e saídas no console)
 
 ### Terminal 2: Maestro & Interface (Rust + React)
 1. `npm install`
-2. `npm run tauri dev` (Compila o Rust, liga o React e invoca automaticamente o backend Python como processo filho).
+2. Defina `AIRPG_BACKEND_DIR` no `.env` se o diretório `AIRPG-Backend-Py` não estiver ao lado da pasta do frontend.
+3. `npm run tauri dev` (Compila o Rust e liga a interface. Ao selecionar **Iniciar**, o Rust inicia `main.py -prod --campaign <caminho-json>` como processo filho.)
+
+O backend usa `venv\Scripts\python.exe` quando disponível; caso contrário, procura `python` no `PATH`. O processo Python é encerrado ao fechar a aplicação ou ao encerrar a sessão pelo botão na interface. No modo de integração, o backend envia a campanha e a narrativa inicial por JSON via `rust_ipc_adapter.py`; respostas do jogador e geração de imagens ainda não estão integradas.
+
+Para depuração, a saída `stdout` (eventos IPC) e `stderr` (erros e tracebacks Python) é gravada em `AIRPG_BACKEND_DIR\logs\sidecar.log`. O arquivo é recriado a cada tentativa de iniciar uma campanha; erros de inicialização também mostram esse caminho na interface.
 
 ### Build de Produção
+O launcher Tauri atual inicia `main.py`; o empacotamento e a distribuição do backend Python como executável ainda não estão conectados ao build do instalador. Para executar uma build local, mantenha o backend disponível e configure `AIRPG_BACKEND_DIR` e, se necessário, `AIRPG_PYTHON` no ambiente de execução antes de gerar o instalador com `npm run tauri build`.
+
+FUTURO:
 1. Gere o executável Python (usando Nuitka).
 2. Mova o `.exe` para `apps/frontend/src-ui/binaries/`.
 3. Em `apps/frontend`, execute `npm run tauri build` para gerar o instalador final contendo toda a arquitetura integrada.

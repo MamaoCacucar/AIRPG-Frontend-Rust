@@ -44,6 +44,14 @@
     text-transform: uppercase;
 }
 
+.campaignTags {
+    color: var(--text-secondary, #C4C7C8);
+    font-size: 0.75rem;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+}
+
 .actionButtons {
     display: flex;
     flex-direction: column;

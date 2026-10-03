@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { invoke } from '@tauri-apps/api/core';
 import { Header } from '/src-ui/shared/components/header/Header';
 import { CampaignManageGrid } from './components/buttons/manage/CampaignManageGrid';
 import { CampaignGrid } from './components/cards/CampaignGrid';
@@ -14,6 +15,26 @@ import { useCampaigns } from './hooks/useCampaigns';
 export function Campaign({ adminEnabled = false }) {
   const navigate = useNavigate();
   const { activeCampaigns, campaigns, isLoading } = useCampaigns(adminEnabled);
+  const [startingCampaignId, setStartingCampaignId] = useState(null);
+  const [startError, setStartError] = useState(null);
+
+  const startCampaign = async (campaign) => {
+    setStartingCampaignId(campaign.id);
+    setStartError(null);
+
+    try {
+      await invoke('start_campaign', {
+        campaignPath: campaign.path,
+        campaignTags: campaign.tags,
+      });
+      navigate(`/game/${campaign.id}`);
+    } catch (error) {
+      console.error(`Erro ao iniciar a campanha "${campaign.title}":`, error);
+      setStartError(String(error));
+    } finally {
+      setStartingCampaignId(null);
+    }
+  };
 
   const headerOptions = [
     { label: 'Biblioteca', onClick: () => console.log('Biblioteca clicada') },
@@ -47,6 +68,7 @@ export function Campaign({ adminEnabled = false }) {
         <CampaignManageGrid />
         
         <p className={styles.sectionTitle}>Iniciar nova campanha</p>
+        {startError && <p role="alert">Não foi possível iniciar a campanha: {startError}</p>}
         <PosterGrid>
           {campaigns.map((campaign) => (
             <PosterCard
@@ -55,7 +77,8 @@ export function Campaign({ adminEnabled = false }) {
               tags={campaign.tags}
               players={campaign.players}
               imageSrc={campaign.poster_url}
-              onPlay={() => navigate(`/game/${campaign.id}`)}
+              isStarting={startingCampaignId !== null}
+              onPlay={() => startCampaign(campaign)}
             />
           ))}
         </PosterGrid>
