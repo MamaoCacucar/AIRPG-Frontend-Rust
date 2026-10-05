@@ -80,6 +80,15 @@
     opacity: 0.8;
 }
 
+.sendButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.textInput:disabled {
+    cursor: wait;
+}
+
 .sendIcon {
     width: 1.1875rem; /* 19px */
     height: 1rem; /* 16px */

@@ -9,14 +9,18 @@ import likeIcon from '/src-ui/assets/icons/like.svg'
 import loopIcon from '/src-ui/assets/icons/loop.svg'
 import sendIcon from '/src-ui/assets/icons/send.svg'
 
-export function InputBar() {
+export function InputBar({ onSubmit, disabled = false }) {
     const [inputValue, setInputValue] = useState('');
     const [activeTool, setActiveTool] = useState('fala');
 
-    const handleSend = () => {
-        if (!inputValue.trim()) return;
-        console.log(`Enviando [${activeTool}]:`, inputValue);
-        setInputValue(''); // Limpa após envio
+    const handleSend = async () => {
+        const message = inputValue.trim();
+        if (!message || disabled) return;
+
+        const sent = await onSubmit(message);
+        if (sent) {
+            setInputValue('');
+        }
     };
 
     const handleKeyDown = (e) => {
@@ -39,9 +43,15 @@ export function InputBar() {
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyDown={handleKeyDown}
+                            disabled={disabled}
                             rows={1}
                         />
-                        <button className={styles.sendButton} onClick={handleSend} aria-label="Enviar">
+                        <button
+                            className={styles.sendButton}
+                            onClick={handleSend}
+                            aria-label="Enviar"
+                            disabled={disabled || !inputValue.trim()}
+                        >
                             <img className={styles.sendIcon} src={sendIcon} alt='Enviar' />
                         </button>
                     </div>

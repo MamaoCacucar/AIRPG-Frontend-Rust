@@ -199,14 +199,64 @@ fn parse_event(line: &str) -> Result<SidecarEvent, String> {
         .map_err(|error| format!("Resposta IPC inválida do backend Python: {error}"))
 }
 
+fn prepare_frontend_event(mut event: SidecarEvent) -> Result<SidecarEvent, String> {
+    if event.event_type != "image" {
+        return Ok(event);
+    }
+
+    let image_path = event
+        .payload
+        .get("imagePath")
+        .and_then(Value::as_str)
+        .ok_or_else(|| "O evento de imagem não contém imagePath".to_string())?;
+    let image_path = Path::new(image_path)
+        .canonicalize()
+        .map_err(|error| format!("Não foi possível abrir a imagem '{image_path}': {error}"))?;
+    if !image_path.is_file() {
+        return Err(format!(
+            "O caminho da imagem não é um arquivo: '{}'",
+            image_path.display()
+        ));
+    }
+
+    let content_type = image_content_type(&image_path)?;
+    let max_size = 32 * 1024 * 1024;
+    let metadata = fs::metadata(&image_path)
+        .map_err(|error| format!("Não foi possível consultar a imagem: {error}"))?;
+    if metadata.len() > max_size {
+        return Err(format!(
+            "A imagem excede o limite de 32 MiB: '{}'",
+            image_path.display()
+        ));
+    }
+    let bytes =
+        fs::read(&image_path).map_err(|error| format!("Não foi possível ler a imagem: {error}"))?;
+    event.payload = serde_json::json!({
+        "bytes": bytes,
+        "contentType": content_type,
+    });
+    Ok(event)
+}
+
+fn image_content_type(path: &Path) -> Result<&'static str, String> {
+    match path
+        .extension()
+        .and_then(|extension| extension.to_str())
+        .map(str::to_ascii_lowercase)
+        .as_deref()
+    {
+        Some("png") => Ok("image/png"),
+        Some("jpg" | "jpeg") => Ok("image/jpeg"),
+        Some("webp") => Ok("image/webp"),
+        Some("gif") => Ok("image/gif"),
+        Some("bmp") => Ok("image/bmp"),
+        Some(extension) => Err(format!("Formato de imagem não suportado: .{extension}")),
+        None => Err("A imagem gerada não possui extensão".into()),
+    }
+}
+
 fn open_sidecar_log(backend_dir: &Path) -> Result<(PathBuf, Arc<Mutex<File>>), String> {
-    let log_directory = backend_dir.join("logs");
-    fs::create_dir_all(&log_directory).map_err(|error| {
-        format!(
-            "Não foi possível criar a pasta de logs '{}': {error}",
-            log_directory.display()
-        )
-    })?;
+    let log_directory = backend_dir.join("temp");
     let log_path = log_directory.join("sidecar.log");
     let file = OpenOptions::new()
         .create(true)
@@ -229,6 +279,27 @@ fn write_sidecar_log(log: &Arc<Mutex<File>>, stream: &str, line: &str) -> Result
     writeln!(file, "[{stream}] {line}")
         .and_then(|()| file.flush())
         .map_err(|error| format!("Não foi possível gravar o log do backend: {error}"))
+}
+
+fn read_lossy_lines<R, F>(mut reader: R, mut on_line: F) -> std::io::Result<()>
+where
+    R: BufRead,
+    F: FnMut(String),
+{
+    let mut bytes = Vec::new();
+    loop {
+        bytes.clear();
+        if reader.read_until(b'\n', &mut bytes)? == 0 {
+            return Ok(());
+        }
+        if bytes.last() == Some(&b'\n') {
+            bytes.pop();
+        }
+        if bytes.last() == Some(&b'\r') {
+            bytes.pop();
+        }
+        on_line(String::from_utf8_lossy(&bytes).into_owned());
+    }
 }
 
 fn stop_sidecar(manager: &SidecarManager) -> Result<(), String> {
@@ -346,23 +417,16 @@ fn start_campaign(
     };
     let stderr_log = Arc::clone(&log_file);
     let stderr_reader = std::thread::spawn(move || {
-        for line in BufReader::new(stderr).lines() {
-            match line {
-                Ok(line) => {
-                    if let Err(error) = write_sidecar_log(&stderr_log, "STDERR", &line) {
-                        eprintln!("{error}");
-                        break;
-                    }
-                }
-                Err(error) => {
-                    let _ = write_sidecar_log(
-                        &stderr_log,
-                        "RUST",
-                        &format!("Erro ao ler stderr do backend: {error}"),
-                    );
-                    break;
-                }
+        if let Err(error) = read_lossy_lines(BufReader::new(stderr), |line| {
+            if let Err(error) = write_sidecar_log(&stderr_log, "STDERR", &line) {
+                eprintln!("{error}");
             }
+        }) {
+            let _ = write_sidecar_log(
+                &stderr_log,
+                "RUST",
+                &format!("Erro ao ler stderr do backend: {error}"),
+            );
         }
     });
     state.process = Some(RunningSidecar {
@@ -517,6 +581,25 @@ fn start_campaign(
                             eprintln!("{error}");
                             break;
                         }
+                        let event = match prepare_frontend_event(event) {
+                            Ok(event) => event,
+                            Err(error) => {
+                                let log_error = write_sidecar_log(&stdout_log, "RUST", &error);
+                                if let Err(log_error) = log_error {
+                                    eprintln!("{log_error}");
+                                }
+                                if let Err(emit_error) = app_handle.emit(
+                                    "sidecar-event",
+                                    SidecarEvent {
+                                        event_type: "system_message".into(),
+                                        payload: serde_json::json!({"text": error}),
+                                    },
+                                ) {
+                                    eprintln!("Erro ao encaminhar erro da imagem: {emit_error}");
+                                }
+                                continue;
+                            }
+                        };
                         if let Err(error) = app_handle.emit("sidecar-event", event) {
                             eprintln!("Erro ao encaminhar evento do sidecar: {error}");
                         }
@@ -551,6 +634,43 @@ fn load_game_session(state: State<'_, SidecarManager>, id: String) -> Result<Gam
         Some((campaign_id, session)) if campaign_id == &id => Ok(session.clone()),
         _ => Err("A campanha ainda não foi iniciada nesta sessão".into()),
     }
+}
+
+#[tauri::command]
+fn send_player_input(state: State<'_, SidecarManager>, input: String) -> Result<(), String> {
+    if input.trim().is_empty() {
+        return Err("A ação do jogador não pode estar vazia".into());
+    }
+
+    let mut state = state
+        .state
+        .lock()
+        .map_err(|_| "Estado do sidecar Python indisponível".to_string())?;
+    let process = state
+        .process
+        .as_mut()
+        .ok_or_else(|| "Não existe uma sessão de jogo ativa".to_string())?;
+    if let Some(status) = process
+        .child
+        .try_wait()
+        .map_err(|error| format!("Não foi possível consultar o backend Python: {error}"))?
+    {
+        return Err(format!("O backend Python já foi encerrado ({status})"));
+    }
+
+    let message = serde_json::json!({ "payload": input.trim() });
+    serde_json::to_writer(&mut process.stdin, &message)
+        .and_then(|()| {
+            process
+                .stdin
+                .write_all(b"\n")
+                .map_err(serde_json::Error::io)
+        })
+        .map_err(|error| format!("Não foi possível enviar a ação ao backend: {error}"))?;
+    process
+        .stdin
+        .flush()
+        .map_err(|error| format!("Não foi possível enviar a ação ao backend: {error}"))
 }
 
 #[tauri::command]
@@ -594,6 +714,7 @@ fn main() {
             get_campaign_image,
             start_campaign,
             load_game_session,
+            send_player_input,
             stop_game_session
         ])
         .plugin(tauri_plugin_shell::init())
@@ -610,8 +731,14 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::{open_sidecar_log, write_sidecar_log};
+    use super::{
+        image_content_type, open_sidecar_log, prepare_frontend_event, read_lossy_lines,
+        write_sidecar_log, SidecarEvent,
+    };
+    use serde_json::json;
     use std::fs;
+    use std::io::Cursor;
+    use std::path::Path;
     use std::time::{SystemTime, UNIX_EPOCH};
 
     #[test]
@@ -635,5 +762,44 @@ mod tests {
             "[STDERR] Python traceback\n"
         );
         fs::remove_dir_all(backend_dir).expect("temporary backend directory should be removed");
+    }
+
+    #[test]
+    fn generated_image_event_contains_image_bytes_and_mime_type() {
+        let unique_suffix = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("system clock should be after UNIX epoch")
+            .as_nanos();
+        let image_path = std::env::temp_dir().join(format!(
+            "airpg-image-{}-{unique_suffix}.png",
+            std::process::id()
+        ));
+        fs::write(&image_path, [137, 80, 78, 71]).expect("temporary image should be created");
+
+        let event = prepare_frontend_event(SidecarEvent {
+            event_type: "image".into(),
+            payload: json!({"imagePath": image_path.display().to_string()}),
+        })
+        .expect("image event should be prepared");
+
+        assert_eq!(event.payload["contentType"], "image/png");
+        assert_eq!(event.payload["bytes"], json!([137, 80, 78, 71]));
+        fs::remove_file(image_path).expect("temporary image should be removed");
+    }
+
+    #[test]
+    fn rejects_unsupported_generated_image_format() {
+        assert!(image_content_type(Path::new("generated.svg")).is_err());
+    }
+
+    #[test]
+    fn stderr_reader_preserves_lines_with_non_utf8_bytes() {
+        let mut lines = Vec::new();
+        read_lossy_lines(Cursor::new(b"progress \xff\ntraceback\n"), |line| {
+            lines.push(line)
+        })
+        .expect("stderr reader should accept arbitrary bytes");
+
+        assert_eq!(lines, ["progress �", "traceback"]);
     }
 }

@@ -99,7 +99,7 @@ Cada arquivo deve conter um objeto `campaign` com `title`, `tags` e `poster_url`
 2. Defina `AIRPG_BACKEND_DIR` no `.env` se o diretório `AIRPG-Backend-Py` não estiver ao lado da pasta do frontend.
 3. `npm run tauri dev` (Compila o Rust e liga a interface. Ao selecionar **Iniciar**, o Rust inicia `main.py -prod --campaign <caminho-json>` como processo filho.)
 
-O backend usa `venv\Scripts\python.exe` quando disponível; caso contrário, procura `python` no `PATH`. O processo Python é encerrado ao fechar a aplicação ou ao encerrar a sessão pelo botão na interface. No modo de integração, o backend envia a campanha e a narrativa inicial por JSON via `rust_ipc_adapter.py`; respostas do jogador e geração de imagens ainda não estão integradas.
+O backend usa `venv\Scripts\python.exe` quando disponível; caso contrário, procura `python` no `PATH`. O processo Python é encerrado ao fechar a aplicação ou ao encerrar a sessão pelo botão na interface. Campanha, narrativas, imagens e ações do jogador são integradas via JSON em `rust_ipc_adapter.py`.
 
 Para depuração, a saída `stdout` (eventos IPC) e `stderr` (erros e tracebacks Python) é gravada em `AIRPG_BACKEND_DIR\logs\sidecar.log`. O arquivo é recriado a cada tentativa de iniciar uma campanha; erros de inicialização também mostram esse caminho na interface.
 

@@ -5,6 +5,9 @@ import styles from './GameStyle.module.css';
 
 import { SessionButton } from './components/sessionButton/SessionButton';
 import { NarrativeBlock } from './components/narrativeBlock/NarrativeBlock';
+import { ImageCard } from './components/imageCard/ImageCard';
+import { UserMessage } from './components/userMessage/UserMessage';
+import { InputBar } from './components/inputBar/InputBar';
 
 import arrowIcon from '/src-ui/assets/icons/arrow_to_left.svg';
 
@@ -17,7 +20,14 @@ export function Game() {
     const [endError, setEndError] = useState(null);
     
     // Busca dados reais do backend substituindo os mocks
-    const { session, isLoading, error } = useGameSession(id);
+    const {
+        session,
+        isLoading,
+        error,
+        interactionError,
+        isWaitingForResponse,
+        sendPlayerInput,
+    } = useGameSession(id);
     
     const messagesEndRef = useRef(null);
 
@@ -74,16 +84,47 @@ export function Game() {
 
             <main className={styles.mainContent}>
                 <div className={styles.contentWrapper}>
-                    {endError && <p role="alert">Não foi possível encerrar a sessão: {endError}</p>}
-                    {session.history
-                        .filter((item) => item.type === 'narrative')
-                        .map((item) => (
-                            <NarrativeBlock key={item.id} text={item.text} metadata={item.metadata} />
-                        ))}
+                    {(interactionError || endError) && (
+                        <p role="alert">
+                            {endError
+                                ? `Não foi possível encerrar a sessão: ${endError}`
+                                : interactionError}
+                        </p>
+                    )}
+                    {session.history.map((item) => {
+                        switch (item.type) {
+                            case 'image':
+                                return <ImageCard key={item.id} imageUrl={item.imageUrl} />;
+                            case 'narrative':
+                                return (
+                                    <NarrativeBlock
+                                        key={item.id}
+                                        text={item.text}
+                                        metadata={item.metadata}
+                                    />
+                                );
+                            case 'user':
+                                return (
+                                    <div key={item.id} className={styles.userMessageWrapper}>
+                                        <UserMessage text={item.text} />
+                                    </div>
+                                );
+                            case 'system':
+                                return <p key={item.id} role="alert">{item.text}</p>;
+                            default:
+                                return null;
+                        }
+                    })}
                     <div ref={messagesEndRef} />
                 </div>
                 <div className={styles.scrollSpacer} aria-hidden="true" />
             </main>
+            <footer className={styles.footerContainer}>
+                <InputBar
+                    onSubmit={sendPlayerInput}
+                    disabled={isWaitingForResponse}
+                />
+            </footer>
         </div>
     );
 }
