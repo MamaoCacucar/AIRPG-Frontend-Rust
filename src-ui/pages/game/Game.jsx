@@ -6,7 +6,6 @@ import styles from './GameStyle.module.css';
 import { SessionButton } from './components/sessionButton/SessionButton';
 import { NarrativeBlock } from './components/narrativeBlock/NarrativeBlock';
 import { ImageCard } from './components/imageCard/ImageCard';
-import { Metadata } from './components/metadata/Metadata';
 import { UserMessage } from './components/userMessage/UserMessage';
 import { InputBar } from './components/inputBar/InputBar';
 import { LoadingModal } from '/src-ui/shared/components/loading-modal/LoadingModal';
@@ -30,6 +29,7 @@ export function Game() {
         error,
         interactionError,
         isWaitingForResponse,
+        listenerError,
         generationStatus,
         sendPlayerInput,
     } = useGameSession(id, initialGeneration);
@@ -68,6 +68,11 @@ export function Game() {
         return <div className={styles.pageContainer}><p role="alert">Sessão indisponível.</p></div>;
     }
 
+    const lastNarrativeIndex = session.history.reduce(
+        (lastIndex, item, index) => item.type === 'narrative' ? index : lastIndex,
+        -1
+    );
+
     return (
         <div className={styles.pageContainer}>
             <header className={styles.header}>
@@ -89,14 +94,14 @@ export function Game() {
 
             <main className={styles.mainContent}>
                 <div className={styles.contentWrapper}>
-                    {(interactionError || endError) && (
+                    {(interactionError || endError || listenerError) && (
                         <p role="alert">
                             {endError
                                 ? `Não foi possível encerrar a sessão: ${endError}`
-                                : interactionError}
+                                : interactionError || `Não foi possível acompanhar a geração: ${listenerError}`}
                         </p>
                     )}
-                    {session.history.map((item) => {
+                    {session.history.map((item, index) => {
                         switch (item.type) {
                             case 'image':
                                 return <ImageCard key={item.id} imageUrl={item.imageUrl} />;
@@ -105,7 +110,7 @@ export function Game() {
                                     <NarrativeBlock
                                         key={item.id}
                                         text={item.text}
-                                        metadata={item.metadata}
+                                        generationStatus={index === lastNarrativeIndex ? generationStatus : null}
                                     />
                                 );
                             case 'user':
@@ -120,12 +125,14 @@ export function Game() {
                                 return null;
                         }
                     })}
+                    {lastNarrativeIndex === -1 && generationStatus && (
+                        <NarrativeBlock generationStatus={generationStatus} />
+                    )}
                     <div ref={messagesEndRef} />
                 </div>
                 <div className={styles.scrollSpacer} aria-hidden="true" />
             </main>
             <footer className={styles.footerContainer}>
-                <Metadata status={generationStatus} />
                 <InputBar
                     onSubmit={sendPlayerInput}
                     disabled={isWaitingForResponse}

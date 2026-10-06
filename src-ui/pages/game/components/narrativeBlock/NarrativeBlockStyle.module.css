@@ -52,20 +52,3 @@
     word-wrap: break-word;
     margin: 0;
 }
-
-.metadataWrapper {
-    align-self: stretch;
-    display: inline-flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 0.5rem; /* 8px */
-}
-
-.metadataText {
-    color: var(--text-muted, #656464);
-    font-size: 1rem; /* 11px */
-    font-family: var(--font-mono, 'Space Mono'), monospace;
-    font-weight: 400;
-    line-height: 1.031rem; /* 16.5px */
-    word-wrap: break-word;
-}

@@ -1,6 +1,7 @@
 import styles from './NarrativeBlockStyle.module.css';
+import { Metadata } from '../metadata/Metadata';
 
-export const NarrativeBlock = ({ text, metadata }) => {
+export const NarrativeBlock = ({ text, generationStatus }) => {
     // Função para processar e separar narrativa de diálogos
     const renderContent = () => {
         if (!text) return null;
@@ -42,12 +43,7 @@ export const NarrativeBlock = ({ text, metadata }) => {
     return (
         <div className={styles.narrativeContainer}>
             {renderContent()}
-
-            {metadata && (
-                <div className={styles.metadataWrapper}>
-                    <span className={styles.metadataText}>{metadata}</span>
-                </div>
-            )}
+            <Metadata status={generationStatus} />
         </div>
     );
 };

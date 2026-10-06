@@ -4,6 +4,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { Header } from '/src-ui/shared/components/header/Header';
 import { LoadingModal } from '/src-ui/shared/components/loading-modal/LoadingModal';
+import { useGenerationProgress } from '/src-ui/shared/context/generation-progress/GenerationProgressContext';
 import { CampaignManageGrid } from './components/buttons/manage/CampaignManageGrid';
 import { CampaignGrid } from './components/cards/CampaignGrid';
 import { CampaignCard } from './components/cards/CampaignCard';
@@ -20,12 +21,18 @@ import { useCampaigns } from './hooks/useCampaigns';
 
 export function Campaign({ adminEnabled = false }) {
   const navigate = useNavigate();
+  const { beginGeneration, listenerError } = useGenerationProgress();
   const { activeCampaigns, campaigns, isLoading, error: campaignsError } = useCampaigns(adminEnabled);
   const [startingCampaignId, setStartingCampaignId] = useState(null);
   const [loadingMessage, setLoadingMessage] = useState('Carregando campanhas...');
   const [startError, setStartError] = useState(null);
 
   const startCampaign = async (campaign) => {
+    if (listenerError) {
+      setStartError(`Não é possível acompanhar a geração: ${listenerError}`);
+      return;
+    }
+
     setStartingCampaignId(campaign.id);
     setLoadingMessage('Preparando a campanha...');
     setStartError(null);
@@ -49,6 +56,7 @@ export function Campaign({ adminEnabled = false }) {
               rejectRequest(new Error(status.message));
             } else if (status.isNarrativeRequest && generationStartedAt === null) {
               generationStartedAt = Date.now();
+              beginGeneration(status.message);
               resolveRequest(status);
             }
           }
