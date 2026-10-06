@@ -1,27 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './CampaignCardStyle.module.css';
 import { CampaignCardActions } from '../buttons/action/CampaignCardActions';
+import { ImageCarousel } from '../image-carousel/ImageCarousel';
 
 export function CampaignCard({
   tag,
   title,
   description,
-  imageUrl,
+  images,
   isMain = false,
   className = '',
   onPlay,
   onEdit,
   onShare
 }) {
+  const [controlsVisible, setControlsVisible] = useState(false);
+
   return (
     <div 
       className={`${styles.card} ${className}`.trim()}
+      onMouseEnter={() => setControlsVisible(true)}
+      onMouseLeave={() => setControlsVisible(false)}
     >
-      {/* Imagem de Fundo com efeito sutil no hover */}
-      <img
-        src={imageUrl}
-        alt={title}
-        className={styles.cardImage}
+      <ImageCarousel
+        images={images}
+        title={title}
+        imageClassName={styles.cardImage}
+        controlsVisible={controlsVisible}
       />
 
       {/* Gradiente de fundo para legibilidade do texto */}

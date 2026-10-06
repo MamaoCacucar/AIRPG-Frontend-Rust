@@ -115,6 +115,7 @@
   flex-direction: column;
   justify-content: flex-end;
   padding: 1rem;
+  z-index: 2;
 }
 
 @media (min-width: 768px) {

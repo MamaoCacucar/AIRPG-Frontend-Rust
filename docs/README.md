@@ -67,7 +67,7 @@ Para rodar o projeto localmente com Hot-Reload da interface e isolamento lógico
 
 ### Configuração da pasta de campanhas
 
-O Maestro lê os arquivos `.json` da pasta definida pela variável de ambiente `CAMPAIGNS_DIR`, carregada do arquivo `.env` na raiz do repositório. Esse arquivo é ignorado pelo Git; ajuste o caminho localmente conforme necessário:
+O Maestro lê os arquivos `.airpg` da pasta definida pela variável de ambiente `CAMPAIGNS_DIR`, carregada do arquivo `.env` na raiz do repositório. Cada arquivo `.airpg` é um ZIP com um único JSON na raiz e imagens opcionais em `images/`. Esse arquivo é ignorado pelo Git; ajuste o caminho localmente conforme necessário:
 
 ```env
 CAMPAIGNS_DIR=C:/Users/Felps/Documents/1.Falculdade/Repositorios_GitHub/AI/campaigns
@@ -75,14 +75,24 @@ CAMPAIGNS_DIR=C:/Users/Felps/Documents/1.Falculdade/Repositorios_GitHub/AI/campa
 
 Inicie o Tauri normalmente com `npm run tauri dev`. Variáveis definidas no ambiente do processo têm precedência sobre os valores do `.env`.
 
-Cada arquivo deve conter um objeto `campaign` com `title`, `tags` e `poster_url`. Para imagens de teste salvas junto das campanhas, informe o caminho do arquivo no `poster_url`; o backend entrega a imagem à interface apenas se ela estiver dentro da pasta configurada em `CAMPAIGNS_DIR`. Caminhos web como `/assets/templates/posterCampaign.png` continuam aceitos para imagens da pasta `public`. O ID retornado é o nome do arquivo sem a extensão `.json`. Exemplo:
+Cada arquivo deve conter exatamente um arquivo `.json` na raiz do ZIP, com um objeto `campaign` e campos `title` e `tags`. O nome do JSON é livre (por exemplo, `Mafia_campaign.json`). Arquivos `.airpg` sem JSON na raiz ou com mais de um JSON na raiz não serão listados; o erro será registrado no console do backend. O ID retornado é o nome do arquivo sem a extensão `.airpg`. Os arquivos de imagem suportados dentro de `images/` devem começar com `poster` ou `banner` para serem apresentados, respectivamente, nos cards de novas campanhas e de campanhas ativas. Por exemplo:
+
+```text
+Campaign.airpg
+├── Mafia_campaign.json
+└── images/
+    ├── poster.png
+    ├── poster_1.png
+    └── banner.png
+```
+
+Conteúdo do arquivo JSON na raiz:
 
 ```json
 {
   "campaign": {
     "title": "Naufrago",
-    "tags": ["ÉPICO", "ALTA FANTASIA"],
-    "poster_url": "/assets/templates/posterCampaign.png"
+    "tags": ["ÉPICO", "ALTA FANTASIA"]
   }
 }
 ```
@@ -97,7 +107,7 @@ Cada arquivo deve conter um objeto `campaign` com `title`, `tags` e `poster_url`
 ### Terminal 2: Maestro & Interface (Rust + React)
 1. `npm install`
 2. Defina `AIRPG_BACKEND_DIR` no `.env` se o diretório `AIRPG-Backend-Py` não estiver ao lado da pasta do frontend.
-3. `npm run tauri dev` (Compila o Rust e liga a interface. Ao selecionar **Iniciar**, o Rust inicia `main.py -prod --campaign <caminho-json>` como processo filho.)
+3. `npm run tauri dev` (Compila o Rust e liga a interface. Ao selecionar **Iniciar**, o Rust extrai o único JSON da raiz para um arquivo temporário e inicia `main.py -prod --campaign <caminho-json>` como processo filho.)
 
 O backend usa `venv\Scripts\python.exe` quando disponível; caso contrário, procura `python` no `PATH`. O processo Python é encerrado ao fechar a aplicação ou ao encerrar a sessão pelo botão na interface. Campanha, narrativas, imagens e ações do jogador são integradas via JSON em `rust_ipc_adapter.py`.
 

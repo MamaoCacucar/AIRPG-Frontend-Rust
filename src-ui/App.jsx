@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { SideMenu } from "./shared/components/side-menu/SideMenu";
 import { Campaign } from './pages/campaigns/Campaign';
 import { Game } from './pages/game/Game';
@@ -7,6 +7,7 @@ import styles from './AppStyle.module.css';
 
 export default function App() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [adminEnabled, setAdminEnabled] = useState(false);
   const isGameRoute = location.pathname.startsWith('/game');
 
@@ -24,6 +25,7 @@ export default function App() {
             element={<Settings adminEnabled={adminEnabled} onAdminCodeChange={(code) => {
               if (code === ',3') {
                 setAdminEnabled(true);
+                navigate('/campaigns');
               }
             }} />}
           />

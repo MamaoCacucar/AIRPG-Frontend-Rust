@@ -11,6 +11,7 @@ use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Child, ChildStdin, Command, Stdio};
 use std::sync::{Arc, Mutex};
+use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::{AppHandle, Emitter, Manager, State};
 
 mod campaign_repository;
@@ -22,7 +23,6 @@ pub struct ActiveCampaign {
     pub tag: String,
     pub title: String,
     pub description: String,
-    pub image_url: String,
 }
 
 #[tauri::command]
@@ -33,21 +33,18 @@ fn get_active_campaigns() -> Vec<ActiveCampaign> {
             tag: "ÚLTIMA SESSÃO".into(),
             title: "Neon Drift: Neo-Tokyo".into(),
             description: "“Andando pelo beco onde apenas leds brilham...” • 4° Rodada".into(),
-            image_url: "/assets/templates/campaign.png".into(),
         },
         ActiveCampaign {
             id: "2".into(),
             tag: "CAMPANHA MAIS LONGA".into(),
             title: "Cyber-Sampa 2077".into(),
             description: "“Você finalmente alcança o beco...” • 50° Rodada".into(),
-            image_url: "/assets/templates/campaign.png".into(),
         },
         ActiveCampaign {
             id: "3".into(),
             tag: "LOBISOMEM SEGUE DESAPARECIDO".into(),
             title: "Bosque de Prata".into(),
             description: "“O vilarejo teme o pior...” • 10° Rodada".into(),
-            image_url: "/assets/templates/campaign.png".into(),
         },
     ]
 }
@@ -131,6 +128,7 @@ impl Drop for RunningSidecar {
 struct SidecarState {
     process: Option<RunningSidecar>,
     session: Option<(String, GameSession)>,
+    temporary_campaign_json: Option<PathBuf>,
 }
 
 #[derive(Default)]
@@ -142,6 +140,16 @@ impl Drop for SidecarManager {
     fn drop(&mut self) {
         if let Ok(state) = self.state.get_mut() {
             drop(state.process.take());
+            if let Some(path) = state.temporary_campaign_json.take() {
+                if let Err(error) = fs::remove_file(&path) {
+                    if error.kind() != std::io::ErrorKind::NotFound {
+                        eprintln!(
+                            "Não foi possível remover o JSON temporário da campanha '{}': {error}",
+                            path.display()
+                        );
+                    }
+                }
+            }
         }
     }
 }
@@ -309,7 +317,46 @@ fn stop_sidecar(manager: &SidecarManager) -> Result<(), String> {
         .map_err(|_| "Estado do sidecar Python indisponível".to_string())?;
     state.session = None;
     drop(state.process.take());
+    remove_temporary_campaign_json(&mut state)?;
     Ok(())
+}
+
+fn remove_temporary_campaign_json(state: &mut SidecarState) -> Result<(), String> {
+    if let Some(path) = state.temporary_campaign_json.take() {
+        fs::remove_file(&path)
+            .or_else(|error| {
+                if error.kind() == std::io::ErrorKind::NotFound {
+                    Ok(())
+                } else {
+                    Err(error)
+                }
+            })
+            .map_err(|error| {
+                format!(
+                    "Não foi possível remover o JSON temporário da campanha '{}': {error}",
+                    path.display()
+                )
+            })?;
+    }
+    Ok(())
+}
+
+fn write_temporary_campaign_json(contents: &[u8]) -> Result<PathBuf, String> {
+    let unique_suffix = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_err(|error| format!("Não foi possível gerar o nome do JSON temporário: {error}"))?
+        .as_nanos();
+    let path = std::env::temp_dir().join(format!(
+        "airpg-campaign-{}-{unique_suffix}.json",
+        std::process::id()
+    ));
+    fs::write(&path, contents).map_err(|error| {
+        format!(
+            "Não foi possível preparar o JSON temporário da campanha '{}': {error}",
+            path.display()
+        )
+    })?;
+    Ok(path)
 }
 
 fn sidecar_exit_status(manager: &SidecarManager) -> String {
@@ -362,24 +409,34 @@ fn start_campaign(
     let repository = CampaignRepository::from_env()?;
     let campaign_path = repository.validate_campaign_path(&campaign_path)?;
     let campaign_id = campaign_key(&campaign_path)?;
+    let campaign_json = repository.read_campaign_json(&campaign_path)?;
     let backend_dir = backend_directory()?;
     let python = python_executable(&backend_dir);
     let (log_path, log_file) = open_sidecar_log(&backend_dir)?;
-    write_sidecar_log(
+    let temporary_campaign_json = write_temporary_campaign_json(&campaign_json)?;
+    if let Err(error) = write_sidecar_log(
         &log_file,
         "RUST",
         &format!(
             "Iniciando sidecar: {:?} {:?} -prod --campaign {:?}",
             python,
             backend_dir.join("main.py"),
-            campaign_path
+            temporary_campaign_json
         ),
-    )?;
+    ) {
+        return match fs::remove_file(&temporary_campaign_json) {
+            Ok(()) => Err(error),
+            Err(cleanup_error) => Err(format!(
+                "{error}; também não foi possível remover o JSON temporário '{}': {cleanup_error}",
+                temporary_campaign_json.display()
+            )),
+        };
+    }
     let mut child = Command::new(python)
         .arg(&backend_dir.join("main.py"))
         .arg("-prod")
         .arg("--campaign")
-        .arg(&campaign_path)
+        .arg(&temporary_campaign_json)
         .current_dir(&backend_dir)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -388,15 +445,29 @@ fn start_campaign(
         .map_err(|error| {
             let message = format!("Não foi possível iniciar o backend Python: {error}");
             let _ = write_sidecar_log(&log_file, "RUST", &message);
-            format!("{message}. Log: '{}'", log_path.display())
+            let cleanup_message = fs::remove_file(&temporary_campaign_json)
+                .err()
+                .map(|cleanup_error| {
+                    format!(
+                        "; também não foi possível remover o JSON temporário '{}': {cleanup_error}",
+                        temporary_campaign_json.display()
+                    )
+                })
+                .unwrap_or_default();
+            format!("{message}{cleanup_message}. Log: '{}'", log_path.display())
         })?;
+    state.temporary_campaign_json = Some(temporary_campaign_json);
 
     let stdin = match child.stdin.take() {
         Some(stdin) => stdin,
         None => {
             let _ = child.kill();
             let _ = child.wait();
-            return Err("Não foi possível abrir a entrada IPC do backend Python".into());
+            let error = "Não foi possível abrir a entrada IPC do backend Python".to_string();
+            return match remove_temporary_campaign_json(&mut state) {
+                Ok(()) => Err(error),
+                Err(cleanup_error) => Err(format!("{error}; {cleanup_error}")),
+            };
         }
     };
     let stdout = match child.stdout.take() {
@@ -404,7 +475,11 @@ fn start_campaign(
         None => {
             let _ = child.kill();
             let _ = child.wait();
-            return Err("Não foi possível abrir a saída IPC do backend Python".into());
+            let error = "Não foi possível abrir a saída IPC do backend Python".to_string();
+            return match remove_temporary_campaign_json(&mut state) {
+                Ok(()) => Err(error),
+                Err(cleanup_error) => Err(format!("{error}; {cleanup_error}")),
+            };
         }
     };
     let stderr = match child.stderr.take() {
@@ -412,7 +487,11 @@ fn start_campaign(
         None => {
             let _ = child.kill();
             let _ = child.wait();
-            return Err("Não foi possível capturar os erros do backend Python".into());
+            let error = "Não foi possível capturar os erros do backend Python".to_string();
+            return match remove_temporary_campaign_json(&mut state) {
+                Ok(()) => Err(error),
+                Err(cleanup_error) => Err(format!("{error}; {cleanup_error}")),
+            };
         }
     };
     let stderr_log = Arc::clone(&log_file);
@@ -696,12 +775,13 @@ fn stop_game_session(state: State<'_, SidecarManager>) -> Result<(), String> {
             });
         state.session = None;
         drop(process);
-        if let Some(error) = send_error.or(kill_error).or(wait_error) {
+        let cleanup_error = remove_temporary_campaign_json(&mut state).err();
+        if let Some(error) = send_error.or(kill_error).or(wait_error).or(cleanup_error) {
             return Err(error);
         }
     }
     state.session = None;
-    Ok(())
+    remove_temporary_campaign_json(&mut state)
 }
 
 fn main() {

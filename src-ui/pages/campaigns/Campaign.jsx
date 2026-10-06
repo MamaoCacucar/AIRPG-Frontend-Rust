@@ -58,7 +58,7 @@ export function Campaign({ adminEnabled = false }) {
               tag={activeCampaign.tag}
               title={activeCampaign.title}
               description={activeCampaign.description}
-              imageUrl={activeCampaign.imageUrl}
+              images={campaigns.find((campaign) => campaign.id === activeCampaign.id)?.banner_images}
               // Aqui passamos o direcionamento exigido para o botão primário do CampaignCardActions
               onPlay={() => navigate(`/game/${activeCampaign.id}`)}
             />
@@ -76,7 +76,7 @@ export function Campaign({ adminEnabled = false }) {
               title={campaign.title}
               tags={campaign.tags}
               players={campaign.players}
-              imageSrc={campaign.poster_url}
+              images={campaign.poster_images}
               isStarting={startingCampaignId !== null}
               onPlay={() => startCampaign(campaign)}
             />
