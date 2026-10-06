@@ -61,18 +61,6 @@
     gap: 0.5rem; /* 8px */
 }
 
-.metadataIconWrapper {
-    display: inline-flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-}
-
-.metadataIcon {
-    width: 1rem; /* ~9.33px */
-    height: 1rem; /* ~11.67px */
-}
-
 .metadataText {
     color: var(--text-muted, #656464);
     font-size: 1rem; /* 11px */

@@ -1,5 +1,4 @@
 import styles from './NarrativeBlockStyle.module.css';
-import rayIcon from '/src-ui/assets/icons/ray.svg'
 
 export const NarrativeBlock = ({ text, metadata }) => {
     // Função para processar e separar narrativa de diálogos
@@ -44,12 +43,8 @@ export const NarrativeBlock = ({ text, metadata }) => {
         <div className={styles.narrativeContainer}>
             {renderContent()}
 
-            {/* Rodapé: Metadados da Geração exibido de forma condicional */}
             {metadata && (
                 <div className={styles.metadataWrapper}>
-                    <div className={styles.metadataIconWrapper}>
-                        <img className={styles.metadataIcon} src={rayIcon} alt='relatório de geração' />
-                    </div>
                     <span className={styles.metadataText}>{metadata}</span>
                 </div>
             )}

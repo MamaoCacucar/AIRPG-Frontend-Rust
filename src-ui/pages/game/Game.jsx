@@ -1,13 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { invoke } from '@tauri-apps/api/core';
 import styles from './GameStyle.module.css';
 
 import { SessionButton } from './components/sessionButton/SessionButton';
 import { NarrativeBlock } from './components/narrativeBlock/NarrativeBlock';
 import { ImageCard } from './components/imageCard/ImageCard';
+import { Metadata } from './components/metadata/Metadata';
 import { UserMessage } from './components/userMessage/UserMessage';
 import { InputBar } from './components/inputBar/InputBar';
+import { LoadingModal } from '/src-ui/shared/components/loading-modal/LoadingModal';
 
 import arrowIcon from '/src-ui/assets/icons/arrow_to_left.svg';
 
@@ -17,7 +19,9 @@ import { useGameSession } from './hooks/useGameSession';
 export function Game() {
     const { id } = useParams(); // Captura o campaignId da URL
     const navigate = useNavigate();
+    const { state: routeState } = useLocation();
     const [endError, setEndError] = useState(null);
+    const initialGeneration = routeState?.generationStartedAt ? routeState : null;
     
     // Busca dados reais do backend substituindo os mocks
     const {
@@ -26,8 +30,9 @@ export function Game() {
         error,
         interactionError,
         isWaitingForResponse,
+        generationStatus,
         sendPlayerInput,
-    } = useGameSession(id);
+    } = useGameSession(id, initialGeneration);
     
     const messagesEndRef = useRef(null);
 
@@ -52,7 +57,7 @@ export function Game() {
     };
 
     if (isLoading) {
-        return <div className={styles.pageContainer}><p>Carregando sessão...</p></div>;
+        return <LoadingModal message="Carregando sessão..." />;
     }
 
     if (error) {
@@ -120,6 +125,7 @@ export function Game() {
                 <div className={styles.scrollSpacer} aria-hidden="true" />
             </main>
             <footer className={styles.footerContainer}>
+                <Metadata status={generationStatus} />
                 <InputBar
                     onSubmit={sendPlayerInput}
                     disabled={isWaitingForResponse}

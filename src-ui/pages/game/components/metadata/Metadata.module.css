@@ -1,0 +1,50 @@
+.metadata {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0 1rem 0.75rem;
+  color: var(--text-muted, #a09c98);
+  font-family: var(--font-subtitle, 'Space Mono'), monospace;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.icon,
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 1rem;
+}
+
+.spinner {
+  position: relative;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner::before {
+  position: absolute;
+  inset: 0;
+  border: 0.125rem solid #d8a85e;
+  border-bottom: 0;
+  border-radius: 1rem 1rem 0 0;
+  content: '';
+}
+
+.error {
+  color: #e8a49c;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1.6s;
+  }
+}

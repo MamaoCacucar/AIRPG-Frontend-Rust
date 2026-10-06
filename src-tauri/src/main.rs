@@ -517,10 +517,9 @@ fn start_campaign(
 
     let mut reader = BufReader::new(stdout);
     let mut campaign_title = None;
-    let mut first_narrative = None;
     let mut line = String::new();
 
-    while campaign_title.is_none() || first_narrative.is_none() {
+    while campaign_title.is_none() {
         line.clear();
         let bytes_read = reader.read_line(&mut line).map_err(|error| {
             let _ = write_sidecar_log(
@@ -542,13 +541,13 @@ fn start_campaign(
                 &log_file,
                 "RUST",
                 &format!(
-                    "O stdout do backend foi encerrado antes da campanha e da narrativa inicial. Status: {exit_status}"
+                    "O stdout do backend foi encerrado antes dos dados da campanha. Status: {exit_status}"
                 ),
             );
             return Err(startup_error(
                 manager.inner(),
                 format!(
-                    "O backend Python encerrou antes de enviar a campanha e a narrativa inicial (status: {exit_status}). Log: '{}'",
+                    "O backend Python encerrou antes de enviar os dados da campanha (status: {exit_status}). Log: '{}'",
                     log_path.display()
                 ),
             ));
@@ -571,6 +570,15 @@ fn start_campaign(
             }
         };
         match event.event_type.as_str() {
+            "log" => {
+                if let Err(error) = app.emit("sidecar-event", event.clone()) {
+                    let _ = write_sidecar_log(
+                        &log_file,
+                        "RUST",
+                        &format!("Erro ao encaminhar log do backend: {error}"),
+                    );
+                }
+            }
             "campaign" => {
                 campaign_title = event
                     .payload
@@ -582,22 +590,6 @@ fn start_campaign(
                         manager.inner(),
                         format!(
                             "O backend enviou os dados da campanha sem um título. Log: '{}'",
-                            log_path.display()
-                        ),
-                    ));
-                }
-            }
-            "narrative" => {
-                first_narrative = event
-                    .payload
-                    .get("text")
-                    .and_then(Value::as_str)
-                    .map(str::to_string);
-                if !matches!(first_narrative.as_deref(), Some(text) if !text.is_empty()) {
-                    return Err(startup_error(
-                        manager.inner(),
-                        format!(
-                            "O backend enviou uma narrativa inicial vazia. Log: '{}'",
                             log_path.display()
                         ),
                     ));
@@ -623,22 +615,13 @@ fn start_campaign(
             "O backend não enviou os dados da campanha".into(),
         )
     })?;
-    let first_narrative = first_narrative.ok_or_else(|| {
-        startup_error(
-            manager.inner(),
-            "O backend não enviou a narrativa inicial".into(),
-        )
-    })?;
     let session = GameSession {
         campaign_title,
         campaign_tags,
         round_number: 1,
-        history: vec![HistoryItem::Narrative {
-            id: 1,
-            text: first_narrative,
-            metadata: "Narrativa inicial".into(),
-        }],
+        history: Vec::new(),
     };
+    let session_campaign_id = campaign_id.clone();
     let mut state = manager
         .state
         .lock()
@@ -652,12 +635,83 @@ fn start_campaign(
     let app_handle = app.clone();
     let stdout_log = Arc::clone(&log_file);
     std::thread::spawn(move || {
+        let mut received_narrative = false;
+        let mut received_image = false;
+        let mut completed_initial_generation = false;
+        let mut stream_error = None;
         for line in reader.lines() {
             match line {
                 Ok(line) => match parse_event(&line) {
-                    Ok(event) => {
+                    Ok(mut event) => {
+                        if event.event_type == "narrative" {
+                            if !received_narrative
+                                && !matches!(
+                                    event.payload.get("text").and_then(Value::as_str),
+                                    Some(text) if !text.trim().is_empty()
+                                )
+                            {
+                                stream_error = Some(
+                                    "ERRO: O backend enviou uma narrativa inicial vazia.".into(),
+                                );
+                                break;
+                            }
+                            if !received_narrative {
+                                event.payload["eventId"] = serde_json::json!(1);
+                                if let Some(text) =
+                                    event.payload.get("text").and_then(Value::as_str)
+                                {
+                                    let metadata = event
+                                        .payload
+                                        .get("speaker")
+                                        .and_then(Value::as_str)
+                                        .unwrap_or("Mestre")
+                                        .to_string();
+                                    let manager = app_handle.state::<SidecarManager>();
+                                    match manager.state.lock() {
+                                        Ok(mut state) => {
+                                            if let Some((campaign_id, session)) =
+                                                state.session.as_mut()
+                                            {
+                                                if campaign_id == &session_campaign_id {
+                                                    session.history.push(HistoryItem::Narrative {
+                                                        id: 1,
+                                                        text: text.to_string(),
+                                                        metadata,
+                                                    });
+                                                }
+                                            }
+                                        }
+                                        Err(error) => {
+                                            let message = format!(
+                                                "Estado da sessão indisponível ao salvar a narrativa inicial: {error}"
+                                            );
+                                            let _ =
+                                                write_sidecar_log(&stdout_log, "RUST", &message);
+                                            eprintln!("{message}");
+                                        }
+                                    };
+                                }
+                            }
+                            received_narrative = true;
+                        } else if event.event_type == "image" {
+                            received_image = true;
+                        } else if event.event_type == "log"
+                            && event
+                                .payload
+                                .as_str()
+                                .map(|message| {
+                                    message
+                                        .to_lowercase()
+                                        .contains("sistema pronto para nova rodada")
+                                })
+                                .unwrap_or(false)
+                            && received_image
+                        {
+                            completed_initial_generation = true;
+                        }
                         if let Err(error) = write_sidecar_log(&stdout_log, "STDOUT", &line) {
                             eprintln!("{error}");
+                            stream_error = Some(format!("ERRO: {error}"));
                             break;
                         }
                         let event = match prepare_frontend_event(event) {
@@ -685,6 +739,7 @@ fn start_campaign(
                     }
                     Err(error) => {
                         let _ = write_sidecar_log(&stdout_log, "RUST", &error);
+                        stream_error = Some(format!("ERRO: {error}"));
                         break;
                     }
                 },
@@ -694,8 +749,29 @@ fn start_campaign(
                         "RUST",
                         &format!("Erro ao ler saída do sidecar Python: {error}"),
                     );
+                    stream_error = Some(format!(
+                        "ERRO: Não foi possível ler os eventos do backend Python: {error}"
+                    ));
                     break;
                 }
+            }
+        }
+        if !completed_initial_generation {
+            let message = stream_error.unwrap_or_else(|| {
+                if received_narrative {
+                    "ERRO: O backend Python encerrou antes de concluir a geração da rodada.".into()
+                } else {
+                    "ERRO: O backend Python encerrou antes de gerar a narrativa inicial.".into()
+                }
+            });
+            if let Err(error) = app_handle.emit(
+                "sidecar-event",
+                SidecarEvent {
+                    event_type: "system_message".into(),
+                    payload: serde_json::json!({"text": message}),
+                },
+            ) {
+                eprintln!("Erro ao informar falha na geração inicial: {error}");
             }
         }
     });

@@ -14,9 +14,15 @@ export function useCampaigns(adminEnabled = false) {
   const [activeCampaigns, setActiveCampaigns] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    let isActive = true;
+
     async function fetchCampaigns() {
+      setIsLoading(true);
+      setError(null);
+
       try {
         // Chamadas ao backend Rust via Tauri IPC
         const activeCampaigns = await invoke('get_active_campaigns');
@@ -31,6 +37,9 @@ export function useCampaigns(adminEnabled = false) {
             listedCampaigns = [...campaigns, ...secretCampaigns];
           } catch (error) {
             console.error('Erro ao carregar campanhas secretas:', error);
+            if (isActive) {
+              setError(`Não foi possível carregar as campanhas secretas: ${String(error)}`);
+            }
           }
         }
 
@@ -42,16 +51,28 @@ export function useCampaigns(adminEnabled = false) {
           }
         }
         
-        setActiveCampaigns(activeCampaigns);
-        setCampaigns(listedCampaigns);
+        if (isActive) {
+          setActiveCampaigns(activeCampaigns);
+          setCampaigns(listedCampaigns);
+        }
       } catch (error) {
         console.error("Erro ao carregar campanhas:", error);
+        if (isActive) {
+          setError(`Não foi possível carregar as campanhas: ${String(error)}`);
+        }
       } finally {
-        setIsLoading(false);
+        if (isActive) {
+          setIsLoading(false);
+        }
       }
     }
+
     fetchCampaigns();
+
+    return () => {
+      isActive = false;
+    };
   }, [adminEnabled]);
 
-  return { activeCampaigns, campaigns, isLoading };
+  return { activeCampaigns, campaigns, isLoading, error };
 }

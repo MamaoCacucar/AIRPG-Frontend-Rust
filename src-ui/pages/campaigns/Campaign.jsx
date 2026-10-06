@@ -1,37 +1,83 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { invoke } from '@tauri-apps/api/core';
+import { listen } from '@tauri-apps/api/event';
 import { Header } from '/src-ui/shared/components/header/Header';
+import { LoadingModal } from '/src-ui/shared/components/loading-modal/LoadingModal';
 import { CampaignManageGrid } from './components/buttons/manage/CampaignManageGrid';
 import { CampaignGrid } from './components/cards/CampaignGrid';
 import { CampaignCard } from './components/cards/CampaignCard';
 import { PosterGrid } from './components/posters/PosterGrid';
 import { PosterCard } from './components/posters/PosterCard';
 import styles from './CampaignStyle.module.css';
+import {
+  getGenerationStatus,
+  isGenerationErrorMessage,
+} from '/src-ui/shared/utils/generationStatus';
 
 // Hook de dados
 import { useCampaigns } from './hooks/useCampaigns';
 
 export function Campaign({ adminEnabled = false }) {
   const navigate = useNavigate();
-  const { activeCampaigns, campaigns, isLoading } = useCampaigns(adminEnabled);
+  const { activeCampaigns, campaigns, isLoading, error: campaignsError } = useCampaigns(adminEnabled);
   const [startingCampaignId, setStartingCampaignId] = useState(null);
+  const [loadingMessage, setLoadingMessage] = useState('Carregando campanhas...');
   const [startError, setStartError] = useState(null);
 
   const startCampaign = async (campaign) => {
     setStartingCampaignId(campaign.id);
+    setLoadingMessage('Preparando a campanha...');
     setStartError(null);
 
+    let resolveRequest;
+    let rejectRequest;
+    let generationStartedAt = null;
+    const requestStarted = new Promise((resolve, reject) => {
+      resolveRequest = resolve;
+      rejectRequest = reject;
+    });
+    requestStarted.catch(() => {});
+
     try {
-      await invoke('start_campaign', {
-        campaignPath: campaign.path,
-        campaignTags: campaign.tags,
+      const unlisten = await listen('sidecar-event', ({ payload }) => {
+        if (payload?.type === 'log') {
+          const status = getGenerationStatus(payload.payload);
+          if (status) {
+            setLoadingMessage(status.message);
+            if (status.phase === 'error') {
+              rejectRequest(new Error(status.message));
+            } else if (status.isNarrativeRequest && generationStartedAt === null) {
+              generationStartedAt = Date.now();
+              resolveRequest(status);
+            }
+          }
+        } else if (payload?.type === 'system_message') {
+          const message = payload.payload?.text;
+          if (isGenerationErrorMessage(message)) {
+            rejectRequest(new Error(message));
+          }
+        }
       });
-      navigate(`/game/${campaign.id}`);
+
+      try {
+        await invoke('start_campaign', {
+          campaignPath: campaign.path,
+          campaignTags: campaign.tags,
+        });
+        const initialStatus = await requestStarted;
+        navigate(`/game/${campaign.id}`, {
+          state: {
+            generationStartedAt,
+            generationStatus: initialStatus.message,
+          },
+        });
+      } finally {
+        unlisten();
+      }
     } catch (error) {
       console.error(`Erro ao iniciar a campanha "${campaign.title}":`, error);
       setStartError(String(error));
-    } finally {
       setStartingCampaignId(null);
     }
   };
@@ -42,14 +88,11 @@ export function Campaign({ adminEnabled = false }) {
     { label: 'Criar', onClick: () => console.log('Criar clicado') }
   ];
 
-  if (isLoading) {
-    return <div className={styles.pageContainer}><p>Carregando banco de dados...</p></div>;
-  }
-
   return (
     <div className={styles.pageContainer}>
       <Header options={headerOptions} />
       <div className={styles.contentContainer}>
+        {campaignsError && <p role="alert">{campaignsError}</p>}
         <p className={styles.sectionTitle}>Continuar campanha</p>
         <CampaignGrid>
           {activeCampaigns.map((activeCampaign) => (
@@ -69,6 +112,9 @@ export function Campaign({ adminEnabled = false }) {
         
         <p className={styles.sectionTitle}>Iniciar nova campanha</p>
         {startError && <p role="alert">Não foi possível iniciar a campanha: {startError}</p>}
+        {startingCampaignId === null && !isLoading && campaigns.length === 0 && !campaignsError && (
+          <p>Nenhuma campanha disponível.</p>
+        )}
         <PosterGrid>
           {campaigns.map((campaign) => (
             <PosterCard
@@ -83,6 +129,13 @@ export function Campaign({ adminEnabled = false }) {
           ))}
         </PosterGrid>
       </div>
+      {(isLoading || startingCampaignId !== null) && (
+        <LoadingModal
+          message={isLoading && startingCampaignId === null
+            ? 'Carregando campanhas...'
+            : loadingMessage}
+        />
+      )}
     </div>
   );
 }
